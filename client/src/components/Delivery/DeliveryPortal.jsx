@@ -439,18 +439,24 @@ export const DeliveryPortal = () => {
               </p>
 
               <div style={{
-                background: 'rgba(255,255,255,0.7)',
-                padding: '6px 12px',
-                borderRadius: '8px',
-                marginBottom: '12px',
-                fontSize: '0.78rem',
-                color: 'var(--primary)',
-                fontWeight: 700
+                background: 'var(--bg-card-subtle)',
+                padding: '8px 14px',
+                borderRadius: '10px',
+                marginBottom: '14px',
+                fontSize: '0.82rem',
+                color: 'var(--text-main)',
+                border: '1px solid var(--border-subtle)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
               }}>
-                ℹ️ Demo Customer OTP: <span style={{ fontSize: '0.95rem', letterSpacing: '2px' }}>{activeOrder.deliveryOtp}</span>
+                <span style={{ color: 'var(--text-muted)' }}>ℹ️ Demo Customer OTP:</span>
+                <span style={{ fontSize: '1.05rem', letterSpacing: '3px', fontWeight: 900, color: 'var(--primary)' }}>
+                  {activeOrder.deliveryOtp}
+                </span>
               </div>
 
-              <form onSubmit={handleVerifyDeliveryOtp} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <form onSubmit={handleVerifyDeliveryOtp} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <input
                   type="text"
                   maxLength={4}
@@ -458,15 +464,17 @@ export const DeliveryPortal = () => {
                   onChange={(e) => setEnteredOtp(e.target.value)}
                   placeholder="4-Digit OTP"
                   style={{
-                    padding: '12px 16px',
-                    borderRadius: 'var(--radius-md)',
-                    border: otpError ? '2px solid #ef4444' : '1.5px solid var(--primary)',
-                    fontSize: '1.3rem',
-                    fontWeight: 800,
-                    letterSpacing: '6px',
+                    padding: '14px 16px',
+                    borderRadius: '12px',
+                    border: otpError ? '2px solid #ef4444' : '2px solid var(--primary)',
+                    fontSize: '1.4rem',
+                    fontWeight: 900,
+                    letterSpacing: '8px',
                     textAlign: 'center',
-                    background: '#fff',
-                    color: 'var(--text-main)'
+                    background: 'var(--bg-card)',
+                    color: 'var(--text-main)',
+                    boxShadow: 'var(--shadow-sm)',
+                    outline: 'none'
                   }}
                 />
 
@@ -476,7 +484,7 @@ export const DeliveryPortal = () => {
                   style={{
                     padding: '12px',
                     fontSize: '0.95rem',
-                    borderRadius: 'var(--radius-md)'
+                    borderRadius: '12px'
                   }}
                 >
                   <CheckCircle2 size={18} />
