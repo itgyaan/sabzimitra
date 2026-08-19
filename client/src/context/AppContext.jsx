@@ -344,18 +344,26 @@ export const AppProvider = ({ children }) => {
       orderNumber,
       status: 'PLACED',
       deliveryOtp: `${Math.floor(1000 + Math.random() * 9000)}`,
-      estimatedMins: 20,
+      estimatedMins: 15,
       createdAt: new Date().toISOString(),
       vendorId: 'vnd-01',
       vendorName: 'Sharma Fresh Sabzi Bhandar',
+      vendorAddress: 'Shop #14, APMC Muhana Mandi, Gate 2, Jaipur',
+      vendorPhone: '+91 98290 11223',
       deliveryPartnerId: 'dlv-01',
       deliveryPartnerName: 'Vikram Choudhary',
+      deliveryPartnerPhone: '+91 98877 66554',
       customerName: user.name || 'Pooja Verma',
-      customerPhone: user.contact || '+919928123456',
+      customerPhone: user.contact || user.phone || '+91 9928123456',
+      deliveryAddress: orderPayload.deliveryAddress || user.address || 'Flat 402, Green Valley Apartments, Malviya Nagar, Jaipur',
       ...orderPayload
     };
 
-    setOrders(prev => [newOrder, ...prev]);
+    setOrders(prev => {
+      const updated = [newOrder, ...prev];
+      localStorage.setItem('sm_orders', JSON.stringify(updated));
+      return updated;
+    });
     setActiveOrderId(newOrder.id);
     clearCart();
     setIsCheckoutOpen(false);

@@ -206,7 +206,7 @@ export const VendorDashboard = () => {
             >
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
                     Order #{order.orderNumber}
                   </h4>
                   <span className={`badge-tag ${order.status === 'DELIVERED' ? 'badge-green' : 'badge-gold'}`}>
@@ -214,7 +214,10 @@ export const VendorDashboard = () => {
                   </span>
                 </div>
                 <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  Customer: <strong>{order.customerName}</strong> ({order.customerPhone}) • Total: <strong>₹{order.totalAmount}</strong> ({order.paymentMode})
+                  Customer: <strong>{order.customerName || 'Pooja Verma'}</strong> ({order.customerPhone || '+91 9928123456'}) • Total: <strong>₹{order.totalAmount}</strong> ({order.paymentMode || 'UPI'})
+                </p>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                  📍 Delivery Drop: <strong>{order.deliveryAddress || 'Flat 402, Green Valley Apartments, Malviya Nagar, Jaipur'}</strong>
                 </p>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '8px' }}>
                   {order.items?.map((item, i) => (
@@ -226,7 +229,7 @@ export const VendorDashboard = () => {
               </div>
 
               {/* Action Buttons for Vendor workflow */}
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {order.status === 'PLACED' && (
                   <button
                     onClick={() => updateOrderStatus(order.id, 'PACKED')}
@@ -244,13 +247,14 @@ export const VendorDashboard = () => {
                     className="btn-primary"
                     style={{ padding: '8px 16px', fontSize: '0.84rem', background: '#3b82f6' }}
                   >
+                    <Bike size={15} />
                     <span>Handover to Delivery Rider</span>
                   </button>
                 )}
 
                 {order.status === 'OUT_FOR_DELIVERY' && (
                   <span className="badge-tag badge-green" style={{ padding: '8px 14px' }}>
-                    Rider On Route (OTP: {order.deliveryOtp})
+                    🛵 Rider On Route (OTP: {order.deliveryOtp})
                   </span>
                 )}
 
