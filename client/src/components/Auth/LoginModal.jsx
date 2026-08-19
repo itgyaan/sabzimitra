@@ -24,10 +24,11 @@ export const LoginModal = () => {
     login, 
     lang, 
     showToast,
-    setRole 
+    setRole,
+    loginModalTargetRole = 'CUSTOMER'
   } = useApp();
 
-  const [authRole, setAuthRole] = useState('CUSTOMER'); // 'CUSTOMER' | 'VENDOR' | 'DELIVERY_PARTNER' | 'ADMIN'
+  const [authRole, setAuthRole] = useState(loginModalTargetRole); // 'CUSTOMER' | 'VENDOR' | 'DELIVERY_PARTNER' | 'ADMIN'
   const [step, setStep] = useState('PHONE'); // 'PHONE' | 'OTP'
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
@@ -36,6 +37,15 @@ export const LoginModal = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(30);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  React.useEffect(() => {
+    if (isLoginModalOpen && loginModalTargetRole) {
+      setAuthRole(loginModalTargetRole);
+      setStep('PHONE');
+      setPhone('');
+      setName('');
+    }
+  }, [isLoginModalOpen, loginModalTargetRole]);
 
   if (!isLoginModalOpen) return null;
 

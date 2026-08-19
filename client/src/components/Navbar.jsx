@@ -32,7 +32,10 @@ export const Navbar = () => {
     userLocation,
     requestUserLocation,
     logout,
+    logoutRole,
     setIsLoginModalOpen,
+    switchRole,
+    authenticatedRoles = {},
     t 
   } = useApp();
 
@@ -319,10 +322,11 @@ export const Navbar = () => {
             {roleNavItems.map(item => {
               const Icon = item.icon;
               const isActive = role === item.key;
+              const isAuthed = authenticatedRoles[item.key];
               return (
                 <button
                   key={item.key}
-                  onClick={() => setRole(item.key)}
+                  onClick={() => switchRole(item.key)}
                   style={{
                     flex: 1,
                     display: 'flex',
@@ -341,9 +345,13 @@ export const Navbar = () => {
                     transition: 'all 0.15s ease',
                     whiteSpace: 'nowrap'
                   }}
+                  title={isAuthed ? `${item.label} (Authenticated)` : `${item.label} (Click to Login)`}
                 >
                   <Icon size={13} style={{ color: isActive ? item.color : 'inherit', flexShrink: 0 }} />
                   <span>{item.label}</span>
+                  {!isAuthed && item.key !== 'CUSTOMER' && (
+                    <span style={{ fontSize: '0.65rem', opacity: 0.7 }}>🔒</span>
+                  )}
                 </button>
               );
             })}

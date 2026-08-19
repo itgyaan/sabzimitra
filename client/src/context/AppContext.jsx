@@ -141,6 +141,20 @@ export const AppProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [coupons, setCoupons] = useState(initialCoupons || []);
+  const [authenticatedRoles, setAuthenticatedRoles] = useState(() => {
+    try {
+      const saved = localStorage.getItem('sm_auth_roles');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return {
+      CUSTOMER: true,
+      VENDOR: false,
+      DELIVERY_PARTNER: false,
+      ADMIN: false
+    };
+  });
+
+  const [loginModalTargetRole, setLoginModalTargetRole] = useState('CUSTOMER');
 
   const [orders, setOrders] = useState(() => {
     try {
@@ -198,6 +212,23 @@ export const AppProvider = ({ children }) => {
   const [commissionRate, setCommissionRate] = useState(8.5);
 
   const t = translations[lang] || translations.hi;
+
+  // Role Switcher with Auth Gate
+  const switchRole = (targetRole) => {
+    if (targetRole === 'PROFILE') {
+      setRole('PROFILE');
+      return;
+    }
+
+    if (authenticatedRoles[targetRole]) {
+      setRole(targetRole);
+      localStorage.setItem('sm_role', targetRole);
+    } else {
+      // Require Login for this specific role
+      setLoginModalTargetRole(targetRole);
+      setIsLoginModalOpen(true);
+    }
+  };
 
   // Request & Detect Accurate User Location (GPS)
   const requestUserLocation = (silent = false) => {
@@ -296,15 +327,29 @@ export const AppProvider = ({ children }) => {
   };
 
   // Auth Operations
-  const login = (userData) => {
+  const login = (userData, specificRole) => {
+    const targetRole = specificRole || userData.role || loginModalTargetRole || 'CUSTOMER';
+    const updatedAuth = { ...authenticatedRoles, [targetRole]: true };
+    setAuthenticatedRoles(updatedAuth);
+    localStorage.setItem('sm_auth_roles', JSON.stringify(updatedAuth));
+
     const fullUser = {
       ...userData,
-      email: userData.email || `${userData.name.toLowerCase().replace(/\s+/g, '')}@example.com`,
+      role: targetRole,
+      email: userData.email || `${userData.name?.toLowerCase().replace(/\s+/g, '') || 'user'}@example.com`,
       address: userData.address || 'Flat 402, Green Valley Apartments, Jaipur',
       isAuthenticated: true
     };
     setUser(fullUser);
-    setRole(userData.role || 'CUSTOMER');
+    localStorage.setItem('sm_user', JSON.stringify(fullUser));
+    setRole(targetRole);
+    localStorage.setItem('sm_role', targetRole);
+    setIsLoginModalOpen(false);
+
+    showToast(
+      lang === 'hi' ? 'लॉगिन सफल!' : 'Login Successful!',
+      `Welcome to SabziMitra as ${targetRole}`
+    );
   };
 
   const logout = () => {
@@ -319,10 +364,31 @@ export const AppProvider = ({ children }) => {
       isAuthenticated: false
     };
     setUser(guest);
+    const resetAuth = {
+      CUSTOMER: false,
+      VENDOR: false,
+      DELIVERY_PARTNER: false,
+      ADMIN: false
+    };
+    setAuthenticatedRoles(resetAuth);
+    localStorage.setItem('sm_auth_roles', JSON.stringify(resetAuth));
     setRole('CUSTOMER');
+    localStorage.removeItem('sm_user');
     showToast(
       lang === 'hi' ? 'लॉगआउट हुआ' : 'Logged Out',
-      'You have been logged out safely.'
+      'You have been logged out from all roles safely.'
+    );
+  };
+
+  const logoutRole = (roleToLogout) => {
+    const r = roleToLogout || role;
+    const updatedAuth = { ...authenticatedRoles, [r]: false };
+    setAuthenticatedRoles(updatedAuth);
+    localStorage.setItem('sm_auth_roles', JSON.stringify(updatedAuth));
+    setRole('CUSTOMER');
+    showToast(
+      lang === 'hi' ? 'भूमिका से लॉगआउट' : 'Role Logged Out',
+      `Signed out of ${r} role successfully.`
     );
   };
 
@@ -626,7 +692,13 @@ export const AppProvider = ({ children }) => {
         updateProductPrice,
         updateVendorKyc,
         commissionRate,
-        setCommissionRate
+        setCommissionRate,
+        authenticatedRoles,
+        setAuthenticatedRoles,
+        loginModalTargetRole,
+        setLoginModalTargetRole,
+        switchRole,
+        logoutRole
       }}
     >
       {children}

@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import { Sparkles, ArrowRight, UserCheck, Shield, ShoppingCart, Truck } from 'lucide-react';
 
 export const RoleSwitcherBanner = () => {
-  const { role, setRole, lang } = useApp();
+  const { role, setRole, lang, logoutRole } = useApp();
 
   const roleDescriptions = {
     CUSTOMER: {
@@ -68,17 +68,38 @@ export const RoleSwitcherBanner = () => {
           <strong style={{ color: 'var(--text-main)', fontSize: '0.84rem' }}>{currentInfo.title}</strong>
         </div>
 
-        <p style={{
-          fontSize: '0.74rem',
-          color: 'var(--text-muted)',
-          margin: 0,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          maxWidth: '500px'
-        }} className="hide-on-mobile">
-          {currentInfo.desc}
-        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <p style={{
+            fontSize: '0.74rem',
+            color: 'var(--text-muted)',
+            margin: 0,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            maxWidth: '450px'
+          }} className="hide-on-mobile">
+            {currentInfo.desc}
+          </p>
+
+          {role !== 'CUSTOMER' && role !== 'PROFILE' && (
+            <button
+              onClick={() => logoutRole(role)}
+              style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.25)',
+                color: '#ef4444',
+                padding: '2px 8px',
+                borderRadius: 'var(--radius-full)',
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+              title="Lock and sign out of this role"
+            >
+              🔒 {lang === 'hi' ? 'लॉगआउट' : 'Lock & Exit'}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
