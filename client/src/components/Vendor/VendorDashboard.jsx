@@ -332,7 +332,7 @@ export const VendorDashboard = () => {
 
                 {/* Rates & Stock Details Row */}
                 <div style={{
-                  background: isEditing ? '#ffffff' : 'var(--bg-card-subtle)',
+                  background: 'var(--bg-card-subtle)',
                   padding: '12px',
                   borderRadius: '12px',
                   display: 'grid',
@@ -365,14 +365,16 @@ export const VendorDashboard = () => {
                           onChange={(e) => setEditPrice(e.target.value)}
                           placeholder="Price"
                           style={{
-                            width: '70px',
-                            padding: '4px 8px',
-                            borderRadius: '6px',
+                            width: '74px',
+                            padding: '6px 8px',
+                            borderRadius: '8px',
                             border: '1.5px solid var(--primary)',
-                            fontSize: '0.88rem',
+                            fontSize: '0.92rem',
                             fontWeight: 800,
-                            background: '#fff',
-                            color: 'var(--text-main)'
+                            background: 'var(--bg-card)',
+                            color: 'var(--text-main)',
+                            outline: 'none',
+                            boxShadow: 'var(--shadow-sm)'
                           }}
                         />
                       </div>
@@ -396,17 +398,19 @@ export const VendorDashboard = () => {
                           onChange={(e) => setEditStock(e.target.value)}
                           placeholder="Stock"
                           style={{
-                            width: '70px',
-                            padding: '4px 8px',
-                            borderRadius: '6px',
+                            width: '74px',
+                            padding: '6px 8px',
+                            borderRadius: '8px',
                             border: '1.5px solid var(--primary)',
-                            fontSize: '0.88rem',
-                            fontWeight: 700,
-                            background: '#fff',
-                            color: 'var(--text-main)'
+                            fontSize: '0.92rem',
+                            fontWeight: 800,
+                            background: 'var(--bg-card)',
+                            color: 'var(--text-main)',
+                            outline: 'none',
+                            boxShadow: 'var(--shadow-sm)'
                           }}
                         />
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>kg</span>
+                        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600 }}>kg</span>
                       </div>
                     ) : (
                       <span style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-main)' }}>
