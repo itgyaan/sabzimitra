@@ -1,0 +1,23 @@
+{
+  "name": "sabzimitra-platform",
+  "version": "1.0.0",
+  "description": "SabziMitra - Hyperlocal Fresh Produce Platform with Customer, Vendor, Delivery Partner, and Admin roles",
+  "scripts": {
+    "install-all": "npm --prefix server install && npm --prefix client install",
+    "server": "npm --prefix server start",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build"
+  },
+  "keywords": [
+    "sabzimitra",
+    "hyperlocal",
+    "agri-commerce",
+    "fresh-produce",
+    "vegetable-delivery",
+    "react",
+    "express",
+    "postgresql"
+  ],
+  "author": "SabziMitra Core Team",
+  "license": "MIT"
+}

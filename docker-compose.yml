@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: sabzimitra-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: sabzi_admin
+      POSTGRES_PASSWORD: sabzi_secure_password
+      POSTGRES_DB: sabzimitra_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/init.sql
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: sabzimitra-api
+    restart: always
+    environment:
+      PORT: 5001
+      NODE_ENV: production
+      DATABASE_URL: postgresql://sabzi_admin:sabzi_secure_password@postgres:5432/sabzimitra_db
+    ports:
+      - "5001:5001"
+    depends_on:
+      - postgres
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: sabzimitra-web
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+
+volumes:
+  pgdata:
