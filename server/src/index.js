@@ -1,5 +1,8 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 
 import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
@@ -12,12 +15,24 @@ import adminRoutes from './routes/admin.js';
 import analyticsRoutes from './routes/analytics.js';
 import { db } from './data/db.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(cors({ origin: '*' }));
 app.use(express.json());
+
+// Determine frontend public/dist directory
+const publicDir = fs.existsSync(path.join(__dirname, '../public'))
+  ? path.join(__dirname, '../public')
+  : path.join(__dirname, '../../client/dist');
+
+if (fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir));
+}
 
 // Health Check
 app.get('/api/health', (req, res) => {
@@ -59,7 +74,19 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 Route
+// SPA Fallback: Serve index.html for all non-API GET requests
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+  const indexPath = path.join(publicDir, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
+  }
+  next();
+});
+
+// 404 Route for unhandled routes/APIs
 app.use('*', (req, res) => {
   res.status(404).json({ success: false, message: 'API endpoint not found' });
 });
@@ -67,3 +94,4 @@ app.use('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🥬 SabziMitra API Server running live on http://localhost:${PORT}`);
 });
+
