@@ -45,12 +45,6 @@ export const OrderTracking = () => {
 
   const currentStep = getStepIndex(order.status);
 
-  const handleSimulateAdvance = () => {
-    const nextStatuses = ['PLACED', 'PACKED', 'OUT_FOR_DELIVERY', 'DELIVERED'];
-    const nextIdx = Math.min(currentStep + 1, nextStatuses.length - 1);
-    updateOrderStatus(order.id, nextStatuses[nextIdx]);
-  };
-
   const handleSubmitReview = (e) => {
     e.preventDefault();
     setReviewSubmitted(true);
@@ -127,34 +121,6 @@ export const OrderTracking = () => {
               customerName={order.customerName || 'Pooja Verma'}
               height="270px"
             />
-
-            {/* Floating Simulation / Advance Button */}
-            {order.status !== 'DELIVERED' && (
-              <button
-                onClick={handleSimulateAdvance}
-                style={{
-                  position: 'absolute',
-                  bottom: '12px',
-                  right: '12px',
-                  zIndex: 1000,
-                  background: 'rgba(16, 185, 129, 0.95)',
-                  color: '#fff',
-                  border: 'none',
-                  padding: '6px 14px',
-                  borderRadius: 'var(--radius-full)',
-                  fontSize: '0.74rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)',
-                  backdropFilter: 'blur(6px)'
-                }}
-              >
-                ⏩ Simulate Next Step
-              </button>
-            )}
           </div>
 
           {/* Delivery Partner Profile Card */}
