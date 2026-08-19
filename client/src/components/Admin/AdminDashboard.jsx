@@ -574,25 +574,108 @@ export const AdminDashboard = () => {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span className={vnd.kycStatus === 'APPROVED' ? 'badge-tag badge-green' : 'badge-tag badge-gold'} style={{ fontSize: '0.7rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                  {/* Status Badge */}
+                  <span
+                    className={
+                      vnd.kycStatus === 'APPROVED'
+                        ? 'badge-tag badge-green'
+                        : vnd.kycStatus === 'REJECTED'
+                        ? 'badge-tag'
+                        : 'badge-tag badge-gold'
+                    }
+                    style={{
+                      fontSize: '0.72rem',
+                      background: vnd.kycStatus === 'REJECTED' ? '#ef4444' : undefined,
+                      color: vnd.kycStatus === 'REJECTED' ? '#ffffff' : undefined
+                    }}
+                  >
                     KYC {vnd.kycStatus}
                   </span>
+
+                  {/* Approve / Re-Approve Action */}
+                  {vnd.kycStatus !== 'APPROVED' ? (
+                    <button
+                      onClick={() => updateVendorKyc(vnd.id, 'APPROVED')}
+                      className="btn-primary"
+                      style={{
+                        padding: '6px 12px',
+                        fontSize: '0.74rem',
+                        background: '#10b981',
+                        color: '#ffffff',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                      title="Approve / Re-Approve Vendor"
+                    >
+                      <CheckCircle2 size={13} />
+                      <span>{vnd.kycStatus === 'REJECTED' ? 'Re-Approve' : 'Approve'}</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => updateVendorKyc(vnd.id, 'REJECTED')}
+                      style={{
+                        padding: '5px 10px',
+                        borderRadius: 'var(--radius-full)',
+                        border: '1px solid #ef4444',
+                        background: 'transparent',
+                        color: '#ef4444',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                      title="Revoke / Reject Vendor"
+                    >
+                      <XCircle size={13} />
+                      <span>Reject</span>
+                    </button>
+                  )}
+
+                  {/* Direct Reject Action for Pending */}
+                  {vnd.kycStatus === 'PENDING' && (
+                    <button
+                      onClick={() => updateVendorKyc(vnd.id, 'REJECTED')}
+                      style={{
+                        padding: '5px 10px',
+                        borderRadius: 'var(--radius-full)',
+                        border: '1px solid #ef4444',
+                        background: 'transparent',
+                        color: '#ef4444',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      <XCircle size={13} />
+                      <span>Reject</span>
+                    </button>
+                  )}
+
+                  {/* Shop Open / Closed Toggle */}
                   <button
                     onClick={() => toggleVendorOpen(vnd.id)}
                     style={{
                       padding: '5px 10px',
                       borderRadius: 'var(--radius-full)',
                       border: '1px solid var(--border-color)',
-                      background: vnd.isOpen ? '#10b981' : 'var(--bg-card-subtle)',
+                      background: vnd.isOpen ? 'var(--primary)' : 'var(--bg-card-subtle)',
                       color: vnd.isOpen ? '#fff' : 'var(--text-muted)',
                       fontSize: '0.72rem',
                       fontWeight: 700,
                       cursor: 'pointer'
                     }}
                   >
-                    {vnd.isOpen ? 'Shop Open' : 'Shop Closed'}
+                    {vnd.isOpen ? '🟢 Open' : '🔴 Closed'}
                   </button>
+
+                  {/* Delete Vendor Button */}
                   <button
                     onClick={() => deleteVendor(vnd.id)}
                     style={{
@@ -604,6 +687,7 @@ export const AdminDashboard = () => {
                       fontSize: '0.74rem',
                       cursor: 'pointer'
                     }}
+                    title="Delete Vendor"
                   >
                     <Trash2 size={13} />
                   </button>
