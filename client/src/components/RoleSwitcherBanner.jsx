@@ -29,10 +29,16 @@ export const RoleSwitcherBanner = () => {
       desc: lang === 'hi' 
         ? 'प्लेटफॉर्म जीएमवी देखें, वेंडर केवाईसी अप्रूव करें, कमीशन % सेट करें, और प्रोमो बैनर / कूपन बनाएं।' 
         : 'Monitor GMV, review & approve vendor KYC documents, adjust platform commission %, and generate coupons.'
+    },
+    PROFILE: {
+      title: lang === 'hi' ? '👤 मेरी प्रोफ़ाइल व ऑर्डर्स (My Account)' : '👤 My Account & Orders',
+      desc: lang === 'hi'
+        ? 'अपनी प्रोफ़ाइल, नाम, डिलीवरी पता, लाइव ऑर्डर्स व ऑर्डर इतिहास प्रबंधित करें।'
+        : 'Manage your profile details, delivery address, live orders, and past history.'
     }
   };
 
-  const currentInfo = roleDescriptions[role];
+  const currentInfo = roleDescriptions[role] || roleDescriptions.CUSTOMER;
 
   return (
     <div style={{
