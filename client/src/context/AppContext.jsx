@@ -103,18 +103,35 @@ export const translations = {
 };
 
 export const AppProvider = ({ children }) => {
-  const [role, setRole] = useState('CUSTOMER'); // CUSTOMER | VENDOR | DELIVERY_PARTNER | ADMIN
-  const [lang, setLang] = useState('hi'); // 'hi' | 'en'
-  const [theme, setTheme] = useState('light'); // 'light' | 'dark'
+  const [role, setRole] = useState(() => {
+    return localStorage.getItem('sm_role') || 'CUSTOMER';
+  });
 
-  // User Auth State
-  const [user, setUser] = useState({
-    id: 'usr-cust-1',
-    name: 'Pooja Verma',
-    contact: '+919928123456',
-    role: 'CUSTOMER',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-    isAuthenticated: true
+  const [lang, setLang] = useState(() => {
+    return localStorage.getItem('sm_lang') || 'hi';
+  });
+
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('sm_theme') || 'light';
+  });
+
+  // User Auth State with LocalStorage
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('sm_user');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return {
+      id: 'usr-cust-1',
+      name: 'Pooja Verma',
+      contact: '+919928123456',
+      email: 'pooja.verma@example.com',
+      address: 'Flat 402, Green Valley Apartments, Malviya Nagar, Jaipur',
+      mandiLocation: 'APMC Muhana Mandi, Gate 2, Jaipur',
+      role: 'CUSTOMER',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+      isAuthenticated: true
+    };
   });
 
   const [products, setProducts] = useState(initialProducts);
@@ -122,7 +139,14 @@ export const AppProvider = ({ children }) => {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [coupons, setCoupons] = useState(initialCoupons);
 
-  const [orders, setOrders] = useState(initialOrders);
+  const [orders, setOrders] = useState(() => {
+    try {
+      const saved = localStorage.getItem('sm_orders');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return initialOrders;
+  });
+
   const [activeOrderId, setActiveOrderId] = useState('ORD-9821');
 
   const [vendors, setVendors] = useState(initialVendors);
@@ -140,9 +164,37 @@ export const AppProvider = ({ children }) => {
 
   const t = translations[lang] || translations.hi;
 
+  // Persist theme
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('sm_theme', theme);
   }, [theme]);
+
+  // Persist language
+  useEffect(() => {
+    localStorage.setItem('sm_lang', lang);
+  }, [lang]);
+
+  // Persist role
+  useEffect(() => {
+    if (role !== 'PROFILE') {
+      localStorage.setItem('sm_role', role);
+    }
+  }, [role]);
+
+  // Persist user
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('sm_user', JSON.stringify(user));
+    }
+  }, [user]);
+
+  // Persist orders
+  useEffect(() => {
+    if (orders) {
+      localStorage.setItem('sm_orders', JSON.stringify(orders));
+    }
+  }, [orders]);
 
   const showToast = (title, message, type = 'success') => {
     setToastMessage({ title, message, type, id: Date.now() });
@@ -151,21 +203,44 @@ export const AppProvider = ({ children }) => {
     }, 4000);
   };
 
+  // Update Profile
+  const updateUserProfile = (updatedFields) => {
+    setUser(prev => {
+      const updated = { ...prev, ...updatedFields };
+      localStorage.setItem('sm_user', JSON.stringify(updated));
+      return updated;
+    });
+    showToast(
+      lang === 'hi' ? 'प्रोफ़ाइल अपडेट हुई' : 'Profile Updated',
+      lang === 'hi' ? 'आपकी जानकारी सफलतापूर्वक सुरक्षित कर ली गई है।' : 'Your details have been saved successfully.',
+      'success'
+    );
+  };
+
   // Auth Operations
   const login = (userData) => {
-    setUser({ ...userData, isAuthenticated: true });
+    const fullUser = {
+      ...userData,
+      email: userData.email || `${userData.name.toLowerCase().replace(/\s+/g, '')}@example.com`,
+      address: userData.address || 'Flat 402, Green Valley Apartments, Jaipur',
+      isAuthenticated: true
+    };
+    setUser(fullUser);
     setRole(userData.role || 'CUSTOMER');
   };
 
   const logout = () => {
-    setUser({
+    const guest = {
       id: null,
       name: 'Guest User',
       contact: '',
+      email: '',
+      address: '',
       role: 'CUSTOMER',
       avatar: null,
       isAuthenticated: false
-    });
+    };
+    setUser(guest);
     setRole('CUSTOMER');
     showToast(
       lang === 'hi' ? 'लॉगआउट हुआ' : 'Logged Out',
@@ -328,6 +403,7 @@ export const AppProvider = ({ children }) => {
         theme,
         setTheme,
         user,
+        updateUserProfile,
         login,
         logout,
         isLoginModalOpen,

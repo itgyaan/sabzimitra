@@ -10,6 +10,7 @@ import { SubscriptionBuilder } from './components/Customer/SubscriptionBuilder';
 import { VendorDashboard } from './components/Vendor/VendorDashboard';
 import { DeliveryPortal } from './components/Delivery/DeliveryPortal';
 import { AdminDashboard } from './components/Admin/AdminDashboard';
+import { ProfilePage } from './components/Profile/ProfilePage';
 import { NotificationToast } from './components/NotificationToast';
 import { LoginModal } from './components/Auth/LoginModal';
 import { 
@@ -28,7 +29,7 @@ const MainContent = () => {
   return (
     <div className="app-wrapper">
       <Navbar />
-      <RoleSwitcherBanner />
+      {role !== 'PROFILE' && <RoleSwitcherBanner />}
 
       <main className="container-max" style={{ flex: 1 }}>
         {role === 'CUSTOMER' && (
@@ -46,6 +47,8 @@ const MainContent = () => {
         {role === 'DELIVERY_PARTNER' && <DeliveryPortal />}
 
         {role === 'ADMIN' && <AdminDashboard />}
+
+        {role === 'PROFILE' && <ProfilePage />}
       </main>
 
       {/* Footer */}
