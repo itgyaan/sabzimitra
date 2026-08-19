@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Navigation, MapPin, Compass, LocateFixed } from 'lucide-react';
+import { Navigation, MapPin, LocateFixed } from 'lucide-react';
 
 const MAPTILER_KEY = 'MsX5E5sG2GFTtK8L6GRT';
 
@@ -19,8 +19,6 @@ export const LiveMapTilerTracker = ({
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const riderMarkerRef = useRef(null);
-  const customerMarkerRef = useRef(null);
-  const routeLineRef = useRef(null);
   const animFrameRef = useRef(null);
   const [isLocating, setIsLocating] = useState(false);
 
@@ -39,102 +37,50 @@ export const LiveMapTilerTracker = ({
   ];
 
   useEffect(() => {
-    if (!mapContainerRef.current) return;
+    const container = mapContainerRef.current;
+    if (!container) return;
 
-    // Clean up previous map instance if any
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.remove();
-      mapInstanceRef.current = null;
-    }
-
-    // Initialize Leaflet Map centered between Mandi & Customer
-    const centerLat = (MANDI_COORDS[0] + custLat) / 2;
-    const centerLng = (MANDI_COORDS[1] + custLng) / 2;
-
-    const map = L.map(mapContainerRef.current, {
-      center: [centerLat, centerLng],
-      zoom: 13,
-      zoomControl: true,
-      attributionControl: false
-    });
-
-    mapInstanceRef.current = map;
-
-    // Add MapTiler Streets v2 Tile Layer
-    L.tileLayer(
-      `https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
-      {
-        tileSize: 512,
-        zoomOffset: -1,
-        minZoom: 1,
-        maxZoom: 19,
-        crossOrigin: true
+    try {
+      // Clean up previous map instance safely
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
       }
-    ).addTo(map);
 
-    // Mandi Icon
-    const mandiIcon = L.divIcon({
-      className: 'custom-map-pin',
-      html: `
-        <div style="
-          background: #f59e0b;
-          color: white;
-          width: 38px;
-          height: 38px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 18px;
-          box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
-          border: 3px solid #ffffff;
-        ">
-          🏪
-        </div>
-      `,
-      iconSize: [38, 38],
-      iconAnchor: [19, 19]
-    });
+      if (container._leaflet_id) {
+        delete container._leaflet_id;
+      }
 
-    // Customer Doorstep Icon
-    const customerIcon = L.divIcon({
-      className: 'custom-map-pin',
-      html: `
-        <div style="
-          background: #10b981;
-          color: white;
-          width: 38px;
-          height: 38px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 18px;
-          box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5);
-          border: 3px solid #ffffff;
-        ">
-          🏠
-        </div>
-      `,
-      iconSize: [38, 38],
-      iconAnchor: [19, 19]
-    });
+      const centerLat = (MANDI_COORDS[0] + custLat) / 2;
+      const centerLng = (MANDI_COORDS[1] + custLng) / 2;
 
-    // Rider Icon
-    const riderIcon = L.divIcon({
-      className: 'custom-rider-pin',
-      html: `
-        <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+      const map = L.map(container, {
+        center: [centerLat, centerLng],
+        zoom: 13,
+        zoomControl: true,
+        attributionControl: false
+      });
+
+      mapInstanceRef.current = map;
+
+      // Add MapTiler Streets v2 Tile Layer
+      L.tileLayer(
+        `https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
+        {
+          tileSize: 512,
+          zoomOffset: -1,
+          minZoom: 1,
+          maxZoom: 19,
+          crossOrigin: true
+        }
+      ).addTo(map);
+
+      // Mandi Icon
+      const mandiIcon = L.divIcon({
+        className: 'custom-map-pin',
+        html: `
           <div style="
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: rgba(16, 185, 129, 0.4);
-            animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-          "></div>
-          <div style="
-            background: #059669;
+            background: #f59e0b;
             color: white;
             width: 36px;
             height: 36px;
@@ -142,100 +88,158 @@ export const LiveMapTilerTracker = ({
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            box-shadow: 0 4px 16px rgba(5, 150, 105, 0.6);
+            font-size: 17px;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
             border: 2.5px solid #ffffff;
-            position: relative;
-            z-index: 2;
           ">
-            🛵
+            🏪
           </div>
-        </div>
-      `,
-      iconSize: [44, 44],
-      iconAnchor: [22, 22]
-    });
+        `,
+        iconSize: [36, 36],
+        iconAnchor: [18, 18]
+      });
 
-    // Add Mandi Pin
-    L.marker(MANDI_COORDS, { icon: mandiIcon })
-      .addTo(map)
-      .bindPopup(`<b>Mandi Hub:</b> ${vendorName}<br/><span style="font-size: 0.8rem; color: #666;">APMC Muhana Mandi, Jaipur</span>`);
+      // Customer Doorstep Icon
+      const customerIcon = L.divIcon({
+        className: 'custom-map-pin',
+        html: `
+          <div style="
+            background: #10b981;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5);
+            border: 2.5px solid #ffffff;
+          ">
+            🏠
+          </div>
+        `,
+        iconSize: [36, 36],
+        iconAnchor: [18, 18]
+      });
 
-    // Add Customer Pin
-    const customerMarker = L.marker([custLat, custLng], { icon: customerIcon })
-      .addTo(map)
-      .bindPopup(`<b>Your Doorstep:</b> ${customerName}<br/><span style="font-size: 0.8rem; color: #059669;">📍 ${custAddress}</span>`);
+      // Rider Icon
+      const riderIcon = L.divIcon({
+        className: 'custom-rider-pin',
+        html: `
+          <div style="position: relative; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
+            <div style="
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              border-radius: 50%;
+              background: rgba(16, 185, 129, 0.4);
+              animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+            "></div>
+            <div style="
+              background: #059669;
+              color: white;
+              width: 34px;
+              height: 34px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 17px;
+              box-shadow: 0 4px 16px rgba(5, 150, 105, 0.6);
+              border: 2.5px solid #ffffff;
+              position: relative;
+              z-index: 2;
+            ">
+              🛵
+            </div>
+          </div>
+        `,
+        iconSize: [42, 42],
+        iconAnchor: [21, 21]
+      });
 
-    customerMarkerRef.current = customerMarker;
+      // Add Mandi Pin
+      L.marker(MANDI_COORDS, { icon: mandiIcon })
+        .addTo(map)
+        .bindPopup(`<b>Mandi Hub:</b> ${vendorName}<br/><span style="font-size: 0.8rem; color: #666;">APMC Muhana Mandi, Jaipur</span>`);
 
-    // Add Delivery Route Polyline
-    const routeLine = L.polyline(routePoints, {
-      color: '#10b981',
-      weight: 5,
-      opacity: 0.85,
-      dashArray: '8, 8',
-      lineCap: 'round',
-      lineJoin: 'round'
-    }).addTo(map);
+      // Add Customer Pin
+      L.marker([custLat, custLng], { icon: customerIcon })
+        .addTo(map)
+        .bindPopup(`<b>Your Doorstep:</b> ${customerName}<br/><span style="font-size: 0.8rem; color: #059669;">📍 ${custAddress}</span>`);
 
-    routeLineRef.current = routeLine;
+      // Add Delivery Route Polyline
+      L.polyline(routePoints, {
+        color: '#10b981',
+        weight: 5,
+        opacity: 0.85,
+        dashArray: '8, 8',
+        lineCap: 'round',
+        lineJoin: 'round'
+      }).addTo(map);
 
-    // Initial Rider Position
-    let initialPoint = routePoints[0];
-    if (status === 'OUT_FOR_DELIVERY' || status === 'PICKED_UP') {
-      initialPoint = routePoints[2];
-    } else if (status === 'DELIVERED') {
-      initialPoint = routePoints[routePoints.length - 1];
-    }
+      // Initial Rider Position
+      let initialPoint = routePoints[0];
+      if (status === 'OUT_FOR_DELIVERY' || status === 'PICKED_UP') {
+        initialPoint = routePoints[2];
+      } else if (status === 'DELIVERED') {
+        initialPoint = routePoints[routePoints.length - 1];
+      }
 
-    const riderMarker = L.marker(initialPoint, { icon: riderIcon })
-      .addTo(map)
-      .bindPopup('<b>🛵 Vikram Choudhary</b><br/><span style="font-size: 0.8rem; color: #059669;">Hero Electric EV (15 Mins Fast Delivery)</span>');
+      const riderMarker = L.marker(initialPoint, { icon: riderIcon })
+        .addTo(map)
+        .bindPopup('<b>🛵 Vikram Choudhary</b><br/><span style="font-size: 0.8rem; color: #059669;">Hero Electric EV (15 Mins Fast Delivery)</span>');
 
-    riderMarkerRef.current = riderMarker;
+      riderMarkerRef.current = riderMarker;
 
-    // Smooth Animation if on the road
-    if (status === 'OUT_FOR_DELIVERY' || status === 'PICKED_UP') {
-      let progress = 0.35;
-      let direction = 1;
+      // Smooth Animation if on the road
+      if (status === 'OUT_FOR_DELIVERY' || status === 'PICKED_UP') {
+        let progress = 0.35;
+        let direction = 1;
 
-      const animateRider = () => {
-        progress += 0.002 * direction;
-        if (progress >= 0.9) direction = -0.5;
-        if (progress <= 0.3) direction = 1;
+        const animateRider = () => {
+          progress += 0.002 * direction;
+          if (progress >= 0.9) direction = -0.5;
+          if (progress <= 0.3) direction = 1;
 
-        const totalSegments = routePoints.length - 1;
-        const currentSegment = Math.min(Math.floor(progress * totalSegments), totalSegments - 1);
-        const segmentProgress = (progress * totalSegments) - currentSegment;
+          const totalSegments = routePoints.length - 1;
+          const currentSegment = Math.min(Math.floor(progress * totalSegments), totalSegments - 1);
+          const segmentProgress = (progress * totalSegments) - currentSegment;
 
-        const p1 = routePoints[currentSegment];
-        const p2 = routePoints[currentSegment + 1];
+          const p1 = routePoints[currentSegment];
+          const p2 = routePoints[currentSegment + 1];
 
-        const lat = p1[0] + (p2[0] - p1[0]) * segmentProgress;
-        const lng = p1[1] + (p2[1] - p1[1]) * segmentProgress;
+          const lat = p1[0] + (p2[0] - p1[0]) * segmentProgress;
+          const lng = p1[1] + (p2[1] - p1[1]) * segmentProgress;
 
-        if (riderMarkerRef.current) {
-          riderMarkerRef.current.setLatLng([lat, lng]);
-        }
+          if (riderMarkerRef.current) {
+            riderMarkerRef.current.setLatLng([lat, lng]);
+          }
+
+          animFrameRef.current = requestAnimationFrame(animateRider);
+        };
 
         animFrameRef.current = requestAnimationFrame(animateRider);
-      };
+      }
 
-      animFrameRef.current = requestAnimationFrame(animateRider);
+      // Fit bounds to show both Mandi and Customer
+      const bounds = L.latLngBounds([MANDI_COORDS, [custLat, custLng]]);
+      map.fitBounds(bounds, { padding: [40, 40] });
+    } catch (err) {
+      console.error('Leaflet Map Initialization Notice:', err);
     }
-
-    // Fit bounds to show both Mandi and Customer
-    const bounds = L.latLngBounds([MANDI_COORDS, [custLat, custLng]]);
-    map.fitBounds(bounds, { padding: [40, 40] });
 
     return () => {
       if (animFrameRef.current) {
         cancelAnimationFrame(animFrameRef.current);
       }
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
+      try {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.remove();
+          mapInstanceRef.current = null;
+        }
+      } catch(e) {}
     };
   }, [status, vendorName, customerName, custLat, custLng, custAddress]);
 
@@ -244,9 +248,11 @@ export const LiveMapTilerTracker = ({
     requestUserLocation(false);
     setTimeout(() => {
       setIsLocating(false);
-      if (mapInstanceRef.current && userLocation?.lat) {
-        mapInstanceRef.current.flyTo([userLocation.lat, userLocation.lng], 15, { duration: 1.5 });
-      }
+      try {
+        if (mapInstanceRef.current && userLocation?.lat) {
+          mapInstanceRef.current.flyTo([userLocation.lat, userLocation.lng], 15, { duration: 1.5 });
+        }
+      } catch(e) {}
     }, 1200);
   };
 
@@ -278,7 +284,7 @@ export const LiveMapTilerTracker = ({
         <span>MapTiler Live GPS • {userLocation?.isLiveGps ? 'Accurate Device GPS' : 'Jaipur Node'}</span>
       </div>
 
-      {/* Floating "Locate My Live GPS Doorstep" Button */}
+      {/* Floating Locate Button */}
       <button
         onClick={handleLocateMe}
         disabled={isLocating}
