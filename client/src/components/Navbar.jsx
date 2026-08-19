@@ -138,7 +138,52 @@ export const Navbar = () => {
           </div>
 
           {/* Controls: Auth Profile, Lang, Theme, Cart */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0, marginLeft: 'auto' }}>
+            {/* Language Switcher */}
+            <button
+              onClick={() => setLang(lang === 'hi' ? 'en' : 'hi')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '2px',
+                background: 'var(--bg-card)',
+                color: 'var(--text-main)',
+                border: '1px solid var(--border-color)',
+                padding: '4px 6px',
+                borderRadius: 'var(--radius-full)',
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                height: '30px',
+                flexShrink: 0
+              }}
+              title="Switch Language"
+            >
+              <Globe size={11} style={{ color: 'var(--primary)' }} />
+              <span>{lang === 'hi' ? 'EN' : 'हिन्दी'}</span>
+            </button>
+
+            {/* Theme Switcher */}
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '50%',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--text-main)',
+                cursor: 'pointer',
+                flexShrink: 0
+              }}
+              title="Toggle Theme"
+            >
+              {theme === 'dark' ? <Sun size={13} style={{ color: '#f59e0b' }} /> : <Moon size={13} />}
+            </button>
+
             {/* Auth Profile / Login Avatar Button */}
             {user?.isAuthenticated ? (
               <button
@@ -152,10 +197,10 @@ export const Navbar = () => {
                   borderRadius: '50%',
                   padding: '1px',
                   cursor: 'pointer',
-                  width: '32px',
-                  height: '32px',
+                  width: '30px',
+                  height: '30px',
                   position: 'relative',
-                  boxShadow: role === 'PROFILE' ? '0 0 12px rgba(16, 185, 129, 0.4)' : 'var(--shadow-sm)',
+                  boxShadow: role === 'PROFILE' ? '0 0 10px rgba(16, 185, 129, 0.4)' : 'var(--shadow-sm)',
                   flexShrink: 0,
                   transition: 'all 0.2s ease'
                 }}
@@ -165,8 +210,8 @@ export const Navbar = () => {
                   src={user.avatar}
                   alt={user.name}
                   style={{
-                    width: '26px',
-                    height: '26px',
+                    width: '24px',
+                    height: '24px',
                     borderRadius: '50%',
                     objectFit: 'cover'
                   }}
@@ -176,10 +221,10 @@ export const Navbar = () => {
                   position: 'absolute',
                   bottom: '-1px',
                   right: '-1px',
-                  width: '8px',
-                  height: '8px',
+                  width: '7px',
+                  height: '7px',
                   background: '#10b981',
-                  border: '2px solid var(--bg-card)',
+                  border: '1.5px solid var(--bg-card)',
                   borderRadius: '50%'
                 }} />
               </button>
@@ -194,91 +239,46 @@ export const Navbar = () => {
                   color: 'var(--primary)',
                   border: '1.5px solid var(--primary)',
                   borderRadius: '50%',
-                  width: '32px',
-                  height: '32px',
+                  width: '30px',
+                  height: '30px',
                   cursor: 'pointer',
                   flexShrink: 0
                 }}
                 title={t.login}
               >
-                <User size={15} />
+                <User size={14} />
               </button>
             )}
 
-            {/* Language Switcher */}
-            <button
-              onClick={() => setLang(lang === 'hi' ? 'en' : 'hi')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '2px',
-                background: 'var(--bg-card)',
-                color: 'var(--text-main)',
-                border: '1px solid var(--border-color)',
-                padding: '4px 7px',
-                borderRadius: 'var(--radius-full)',
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                height: '32px',
-                flexShrink: 0
-              }}
-              title="Switch Language"
-            >
-              <Globe size={12} style={{ color: 'var(--primary)' }} />
-              <span>{lang === 'hi' ? 'EN' : 'हिन्दी'}</span>
-            </button>
-
-            {/* Theme Switcher */}
-            <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border-color)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--text-main)',
-                cursor: 'pointer',
-                flexShrink: 0
-              }}
-              title="Toggle Theme"
-            >
-              {theme === 'dark' ? <Sun size={14} style={{ color: '#f59e0b' }} /> : <Moon size={14} />}
-            </button>
-
-            {/* Cart Button (Always visible on all screen sizes) */}
+            {/* Cart Button (Always 100% visible on all screen sizes) */}
             <button
               onClick={() => setIsCartOpen(true)}
               className="btn-primary"
               style={{
                 position: 'relative',
-                padding: '6px 10px',
-                fontSize: '0.78rem',
-                height: '32px',
+                padding: '5px 9px',
+                fontSize: '0.76rem',
+                height: '30px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '4px',
                 flexShrink: 0,
-                boxShadow: totalCartCount > 0 ? '0 0 12px rgba(16, 185, 129, 0.4)' : 'none'
+                boxShadow: totalCartCount > 0 ? '0 0 10px rgba(16, 185, 129, 0.45)' : 'none'
               }}
-              title="Open Cart"
+              title="Open Basket"
             >
-              <ShoppingBag size={15} />
+              <ShoppingBag size={14} />
               <span className="hide-on-mobile">{lang === 'hi' ? 'थैला' : 'Cart'}</span>
               {totalCartCount > 0 && (
                 <span style={{
                   background: '#ffffff',
                   color: '#059669',
-                  fontSize: '0.7rem',
+                  fontSize: '0.68rem',
                   fontWeight: 900,
                   borderRadius: 'var(--radius-full)',
-                  padding: '1px 6px',
-                  marginLeft: '2px',
-                  lineHeight: 1.2
+                  padding: '1px 5px',
+                  marginLeft: '1px',
+                  lineHeight: 1.1
                 }}>
                   {totalCartCount}
                 </span>
