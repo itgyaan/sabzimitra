@@ -139,9 +139,9 @@ export const Navbar = () => {
 
             {/* Auth Profile / Login Avatar Button */}
             {user?.isAuthenticated ? (
-              <div style={{ position: 'relative' }}>
+              <>
                 <button
-                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  onClick={() => setIsProfileMenuOpen(true)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -182,122 +182,130 @@ export const Navbar = () => {
                   }} />
                 </button>
 
-                {/* Full Rich Profile Modal / Card */}
+                {/* Full Centered Profile Modal */}
                 {isProfileMenuOpen && (
-                  <>
-                    {/* Backdrop */}
-                    <div 
-                      onClick={() => setIsProfileMenuOpen(false)}
-                      style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        zIndex: 199,
-                        background: 'rgba(0,0,0,0.3)',
-                        backdropFilter: 'blur(2px)'
-                      }}
-                    />
-
-                    {/* Profile Sheet */}
+                  <div
+                    style={{
+                      position: 'fixed',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      zIndex: 1100,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: 'rgba(0, 0, 0, 0.6)',
+                      backdropFilter: 'blur(6px)',
+                      padding: '16px'
+                    }}
+                    onClick={() => setIsProfileMenuOpen(false)}
+                  >
                     <div
+                      onClick={(e) => e.stopPropagation()}
                       style={{
-                        position: 'absolute',
-                        top: '44px',
-                        right: 0,
+                        width: '100%',
+                        maxWidth: '360px',
                         background: 'var(--bg-card)',
-                        borderRadius: '20px',
+                        borderRadius: '24px',
                         border: '1px solid var(--border-color)',
-                        boxShadow: '0 16px 40px -10px rgba(0,0,0,0.25)',
-                        padding: '18px',
-                        width: 'min(90vw, 300px)',
-                        zIndex: 200,
+                        boxShadow: 'var(--shadow-lg)',
+                        padding: '24px',
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '14px'
+                        gap: '16px',
+                        position: 'relative'
                       }}
                       className="animate-slide-up"
                     >
-                      {/* User Header Details */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{ position: 'relative' }}>
+                      {/* Close (X) button */}
+                      <button
+                        onClick={() => setIsProfileMenuOpen(false)}
+                        style={{
+                          position: 'absolute',
+                          top: '16px',
+                          right: '16px',
+                          background: 'var(--bg-card-subtle)',
+                          border: 'none',
+                          color: 'var(--text-muted)',
+                          borderRadius: '50%',
+                          width: '30px',
+                          height: '30px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <ChevronDown size={18} style={{ transform: 'rotate(180deg)' }} />
+                      </button>
+
+                      {/* Header Avatar & Name */}
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginTop: '6px' }}>
+                        <div style={{ position: 'relative', marginBottom: '12px' }}>
                           <img
                             src={user.avatar}
                             alt={user.name}
                             style={{
-                              width: '52px',
-                              height: '52px',
+                              width: '72px',
+                              height: '72px',
                               borderRadius: '50%',
                               objectFit: 'cover',
-                              border: '2px solid var(--primary)'
+                              border: '3px solid var(--primary)',
+                              boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)'
                             }}
                           />
                           <span style={{
                             position: 'absolute',
                             bottom: '2px',
-                            right: '2px',
-                            width: '12px',
-                            height: '12px',
+                            right: '4px',
+                            width: '14px',
+                            height: '14px',
                             background: '#10b981',
-                            border: '2px solid var(--bg-card)',
+                            border: '2.5px solid var(--bg-card)',
                             borderRadius: '50%'
                           }} />
                         </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <h4 style={{
-                            fontSize: '1rem',
-                            fontWeight: 800,
-                            margin: 0,
-                            color: 'var(--text-main)',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis'
-                          }}>
-                            {user.name}
-                          </h4>
-                          <span className="badge-tag badge-green" style={{ fontSize: '0.66rem', marginTop: '3px' }}>
-                            {user.role === 'CUSTOMER' ? '🛒 Customer' : user.role === 'VENDOR' ? '🏪 Mandi Vendor' : user.role === 'DELIVERY_PARTNER' ? '🛵 Delivery Partner' : '🛡️ Super Admin'}
-                          </span>
-                          <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                            {user.phone || '+91 98877 66554'}
-                          </p>
-                        </div>
+
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
+                          {user.name}
+                        </h3>
+                        <span className="badge-tag badge-green" style={{ fontSize: '0.72rem', marginTop: '6px' }}>
+                          {user.role === 'CUSTOMER' ? '🛒 Customer' : user.role === 'VENDOR' ? '🏪 Mandi Vendor' : user.role === 'DELIVERY_PARTNER' ? '🛵 Delivery Partner' : '🛡️ Super Admin'}
+                        </span>
+                        <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                          {user.phone || '+91 98877 66554'}
+                        </p>
                       </div>
 
                       {/* Location / Mandi Info */}
                       <div style={{
                         background: 'var(--bg-card-subtle)',
-                        padding: '10px 12px',
-                        borderRadius: '12px',
-                        fontSize: '0.76rem',
+                        padding: '12px 14px',
+                        borderRadius: '14px',
+                        fontSize: '0.8rem',
                         color: 'var(--text-muted)',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '6px'
+                        gap: '8px',
+                        border: '1px solid var(--border-subtle)'
                       }}>
-                        <MapPin size={14} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-                        <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {user.address || 'APMC Muhana Mandi, Jaipur'}
+                        <MapPin size={16} style={{ color: 'var(--primary)', flexShrink: 0 }} />
+                        <span style={{ lineHeight: 1.3 }}>
+                          {user.address || 'APMC Muhana Mandi, Gate 2, Jaipur'}
                         </span>
                       </div>
 
-                      {/* Actions List */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      {/* Action Buttons */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
                         <button
                           onClick={() => { setIsLoginModalOpen(true); setIsProfileMenuOpen(false); }}
+                          className="btn-primary"
                           style={{
-                            padding: '10px 12px',
-                            background: 'var(--primary-light)',
-                            border: '1px solid rgba(16, 185, 129, 0.2)',
-                            borderRadius: '10px',
-                            fontSize: '0.82rem',
-                            fontWeight: 700,
-                            color: 'var(--primary)',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px'
+                            width: '100%',
+                            padding: '12px',
+                            fontSize: '0.88rem',
+                            borderRadius: '12px'
                           }}
                         >
                           <UserCheck size={16} />
@@ -307,16 +315,18 @@ export const Navbar = () => {
                         <button
                           onClick={() => { logout(); setIsProfileMenuOpen(false); }}
                           style={{
-                            padding: '10px 12px',
+                            width: '100%',
+                            padding: '12px',
                             background: 'transparent',
-                            border: '1px solid #fee2e2',
-                            borderRadius: '10px',
-                            fontSize: '0.82rem',
+                            border: '1.5px solid #ef4444',
+                            borderRadius: '12px',
+                            fontSize: '0.88rem',
                             fontWeight: 700,
                             color: '#ef4444',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
+                            justifyContent: 'center',
                             gap: '8px'
                           }}
                         >
@@ -325,9 +335,9 @@ export const Navbar = () => {
                         </button>
                       </div>
                     </div>
-                  </>
+                  </div>
                 )}
-              </div>
+              </>
             ) : (
               <button
                 onClick={() => setIsLoginModalOpen(true)}

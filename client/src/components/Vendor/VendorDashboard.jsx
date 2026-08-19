@@ -278,108 +278,180 @@ export const VendorDashboard = () => {
           </div>
         </div>
 
-        <div className="glass-card" style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
-            <thead>
-              <tr style={{ background: 'var(--bg-card-subtle)', borderBottom: '1px solid var(--border-color)' }}>
-                <th style={{ padding: '14px 18px', fontWeight: 700 }}>Produce Item</th>
-                <th style={{ padding: '14px 18px', fontWeight: 700 }}>Category</th>
-                <th style={{ padding: '14px 18px', fontWeight: 700 }}>Mandi Rate</th>
-                <th style={{ padding: '14px 18px', fontWeight: 700 }}>Our Price (₹/kg)</th>
-                <th style={{ padding: '14px 18px', fontWeight: 700 }}>Stock (kg)</th>
-                <th style={{ padding: '14px 18px', fontWeight: 700, textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map(p => {
-                const isEditing = editingId === p.id;
-                return (
-                  <tr key={p.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                    <td style={{ padding: '14px 18px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <img src={p.image} alt={p.nameEn} style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover' }} />
-                        <div>
-                          <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>
-                            {lang === 'hi' ? p.nameHi : p.nameEn}
-                          </div>
-                          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{p.freshness}</span>
-                        </div>
-                      </div>
-                    </td>
+        {/* Responsive Produce & Daily Mandi Rate Updater Cards */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {products.map(p => {
+            const isEditing = editingId === p.id;
+            return (
+              <div
+                key={p.id}
+                className="glass-card"
+                style={{
+                  padding: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                  border: isEditing ? '1.5px solid var(--primary)' : '1px solid var(--border-color)',
+                  background: isEditing ? 'var(--primary-light)' : 'var(--bg-card)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                {/* Top Row: Image, Name, Freshness, Category */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <img
+                      src={p.image}
+                      alt={p.nameEn}
+                      style={{
+                        width: '46px',
+                        height: '46px',
+                        borderRadius: '12px',
+                        objectFit: 'cover',
+                        flexShrink: 0
+                      }}
+                    />
+                    <div>
+                      <h4 style={{ fontSize: '0.98rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
+                        {lang === 'hi' ? p.nameHi : p.nameEn}
+                      </h4>
+                      <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
+                        {lang === 'hi' ? p.nameEn : p.nameHi} • <span style={{ color: '#10b981', fontWeight: 600 }}>{p.freshness}</span>
+                      </p>
+                    </div>
+                  </div>
 
-                    <td style={{ padding: '14px 18px', textTransform: 'capitalize', color: 'var(--text-muted)' }}>
-                      {p.category}
-                    </td>
+                  <span className="badge-tag" style={{ background: 'var(--bg-card-subtle)', color: 'var(--text-muted)', fontSize: '0.7rem' }}>
+                    {p.category}
+                  </span>
+                </div>
 
-                    <td style={{ padding: '14px 18px', color: 'var(--text-muted)' }}>
-                      ₹{p.mandiRatePerKg}
-                    </td>
+                {/* Rates & Stock Details Row */}
+                <div style={{
+                  background: isEditing ? '#ffffff' : 'var(--bg-card-subtle)',
+                  padding: '12px',
+                  borderRadius: '12px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
+                  gap: '10px',
+                  alignItems: 'center',
+                  border: '1px solid var(--border-subtle)'
+                }}>
+                  {/* Mandi Rate */}
+                  <div>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block' }}>
+                      Mandi Rate (APMC)
+                    </span>
+                    <span style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                      ₹{p.mandiRatePerKg}/kg
+                    </span>
+                  </div>
 
-                    <td style={{ padding: '14px 18px' }}>
-                      {isEditing ? (
+                  {/* Our Selling Price */}
+                  <div>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block' }}>
+                      {lang === 'hi' ? 'हमारा भाव' : 'Selling Price'}
+                    </span>
+                    {isEditing ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                        <span style={{ fontWeight: 800, color: 'var(--primary)' }}>₹</span>
                         <input
                           type="number"
                           value={editPrice}
                           onChange={(e) => setEditPrice(e.target.value)}
+                          placeholder="Price"
                           style={{
-                            width: '80px',
-                            padding: '6px 8px',
+                            width: '70px',
+                            padding: '4px 8px',
                             borderRadius: '6px',
                             border: '1.5px solid var(--primary)',
                             fontSize: '0.88rem',
-                            fontWeight: 700
+                            fontWeight: 800,
+                            background: '#fff',
+                            color: 'var(--text-main)'
                           }}
                         />
-                      ) : (
-                        <strong style={{ color: 'var(--primary)', fontSize: '1rem' }}>₹{p.pricePerKg}</strong>
-                      )}
-                    </td>
+                      </div>
+                    ) : (
+                      <strong style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--primary)' }}>
+                        ₹{p.pricePerKg}/kg
+                      </strong>
+                    )}
+                  </div>
 
-                    <td style={{ padding: '14px 18px' }}>
-                      {isEditing ? (
+                  {/* Available Stock */}
+                  <div>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block' }}>
+                      {lang === 'hi' ? 'उपलब्ध स्टॉक' : 'Available Stock'}
+                    </span>
+                    {isEditing ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
                         <input
                           type="number"
                           value={editStock}
                           onChange={(e) => setEditStock(e.target.value)}
+                          placeholder="Stock"
                           style={{
-                            width: '80px',
-                            padding: '6px 8px',
+                            width: '70px',
+                            padding: '4px 8px',
                             borderRadius: '6px',
                             border: '1.5px solid var(--primary)',
-                            fontSize: '0.88rem'
+                            fontSize: '0.88rem',
+                            fontWeight: 700,
+                            background: '#fff',
+                            color: 'var(--text-main)'
                           }}
                         />
-                      ) : (
-                        <span>{p.stockKg} kg</span>
-                      )}
-                    </td>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>kg</span>
+                      </div>
+                    ) : (
+                      <span style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                        {p.stockKg} kg
+                      </span>
+                    )}
+                  </div>
+                </div>
 
-                    <td style={{ padding: '14px 18px', textAlign: 'right' }}>
-                      {isEditing ? (
-                        <button
-                          onClick={() => saveEdit(p.id)}
-                          className="btn-primary"
-                          style={{ padding: '6px 12px', fontSize: '0.78rem' }}
-                        >
-                          <Save size={14} />
-                          <span>Save</span>
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => startEdit(p)}
-                          className="btn-secondary"
-                          style={{ padding: '6px 12px', fontSize: '0.78rem' }}
-                        >
-                          <Edit3 size={14} />
-                          <span>Update</span>
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                {/* Actions Bottom Bar */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                  {isEditing ? (
+                    <>
+                      <button
+                        onClick={() => setEditingId(null)}
+                        className="btn-secondary"
+                        style={{ padding: '6px 14px', fontSize: '0.8rem', minHeight: '34px' }}
+                      >
+                        <span>Cancel</span>
+                      </button>
+                      <button
+                        onClick={() => saveEdit(p.id)}
+                        className="btn-primary"
+                        style={{ padding: '6px 16px', fontSize: '0.8rem', minHeight: '34px' }}
+                      >
+                        <Save size={14} />
+                        <span>Save Rate & Stock</span>
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => startEdit(p)}
+                      className="btn-secondary"
+                      style={{
+                        padding: '6px 14px',
+                        fontSize: '0.8rem',
+                        minHeight: '34px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <Edit3 size={14} style={{ color: 'var(--primary)' }} />
+                      <span>{lang === 'hi' ? 'भाव व स्टॉक बदलें' : 'Update Rate / Stock'}</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
     </div>
