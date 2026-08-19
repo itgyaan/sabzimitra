@@ -29,6 +29,8 @@ export const Navbar = () => {
     orders, 
     setActiveOrderId,
     user,
+    userLocation,
+    requestUserLocation,
     logout,
     setIsLoginModalOpen,
     t 
