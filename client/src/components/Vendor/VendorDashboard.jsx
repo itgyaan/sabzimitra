@@ -14,7 +14,8 @@ import {
   Plus,
   RefreshCw,
   Coins,
-  Sparkles
+  Sparkles,
+  Bike
 } from 'lucide-react';
 
 export const VendorDashboard = () => {
