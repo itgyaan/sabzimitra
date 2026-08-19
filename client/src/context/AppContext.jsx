@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { initialProducts, initialCoupons, initialVendors, initialDeliveryPartners, initialOrders } from '../data/clientData';
+import { initialProducts, initialCoupons, initialVendors, initialDeliveryPartners, initialOrders, initialCustomers } from '../data/clientData';
 
 const AppContext = createContext();
 
@@ -157,6 +157,17 @@ export const AppProvider = ({ children }) => {
 
   const [vendors, setVendors] = useState(initialVendors || []);
   const [deliveryPartners, setDeliveryPartners] = useState(initialDeliveryPartners || []);
+
+  const [customers, setCustomers] = useState(() => {
+    try {
+      const saved = localStorage.getItem('sm_customers');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return initialCustomers || [];
+  });
 
   const [userLocation, setUserLocation] = useState(() => {
     try {
@@ -468,6 +479,91 @@ export const AppProvider = ({ children }) => {
     showToast('KYC Updated', `Vendor KYC status changed to ${status}`);
   };
 
+  // Customer Management
+  const addCustomer = (newCustomer) => {
+    const cust = {
+      id: `cust-${Date.now()}`,
+      joinedDate: 'Today',
+      totalOrders: 0,
+      totalSpent: 0,
+      status: 'ACTIVE',
+      walletBalance: 0,
+      ...newCustomer
+    };
+    setCustomers(prev => [cust, ...prev]);
+    showToast('Customer Added', `${cust.name} added successfully`);
+  };
+
+  const updateCustomerStatus = (id, newStatus) => {
+    setCustomers(prev => prev.map(c => c.id === id ? { ...c, status: newStatus } : c));
+    showToast('Customer Updated', `Customer status set to ${newStatus}`);
+  };
+
+  const deleteCustomer = (id) => {
+    setCustomers(prev => prev.filter(c => c.id !== id));
+    showToast('Customer Removed', 'Customer deleted from records', 'info');
+  };
+
+  // Vendor Management
+  const addVendor = (newVendor) => {
+    const v = {
+      id: `vnd-${Date.now()}`,
+      rating: 5.0,
+      todayOrders: 0,
+      todayGmv: 0,
+      isOpen: true,
+      kycStatus: 'APPROVED',
+      commissionPct: 8.0,
+      ...newVendor
+    };
+    setVendors(prev => [v, ...prev]);
+    showToast('Vendor Added', `${v.shopName} registered successfully`);
+  };
+
+  const toggleVendorOpen = (id) => {
+    setVendors(prev => prev.map(v => v.id === id ? { ...v, isOpen: !v.isOpen } : v));
+  };
+
+  const deleteVendor = (id) => {
+    setVendors(prev => prev.filter(v => v.id !== id));
+    showToast('Vendor Deleted', 'Vendor partner removed from system', 'info');
+  };
+
+  // Rider Management
+  const addDeliveryPartner = (newRider) => {
+    const r = {
+      id: `dlv-${Date.now()}`,
+      rating: 5.0,
+      tripsToday: 0,
+      earningsToday: 0,
+      isOnline: true,
+      currentLocation: { lat: 26.8525, lng: 75.8235, area: 'Jaipur' },
+      ...newRider
+    };
+    setDeliveryPartners(prev => [r, ...prev]);
+    showToast('Rider Added', `${r.name} added to delivery fleet`);
+  };
+
+  const toggleRiderDuty = (id) => {
+    setDeliveryPartners(prev => prev.map(r => r.id === id ? { ...r, isOnline: !r.isOnline } : r));
+    showToast('Rider Duty Changed', 'Rider active duty toggled');
+  };
+
+  const deleteRider = (id) => {
+    setDeliveryPartners(prev => prev.filter(r => r.id !== id));
+    showToast('Rider Removed', 'Rider deleted from fleet', 'info');
+  };
+
+  const addCoupon = (newCoupon) => {
+    setCoupons(prev => [newCoupon, ...prev]);
+    showToast('Coupon Activated', `Coupon ${newCoupon.code} created`);
+  };
+
+  const deleteCoupon = (code) => {
+    setCoupons(prev => prev.filter(c => c.code !== code));
+    showToast('Coupon Deleted', `Coupon ${code} removed`);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -496,6 +592,8 @@ export const AppProvider = ({ children }) => {
         updateCartQty,
         clearCart,
         coupons,
+        addCoupon,
+        deleteCoupon,
         appliedCoupon,
         applyCouponCode,
         orders,
@@ -503,8 +601,18 @@ export const AppProvider = ({ children }) => {
         setActiveOrderId,
         createOrder,
         updateOrderStatus,
+        customers,
+        addCustomer,
+        updateCustomerStatus,
+        deleteCustomer,
         vendors,
+        addVendor,
+        toggleVendorOpen,
+        deleteVendor,
         deliveryPartners,
+        addDeliveryPartner,
+        toggleRiderDuty,
+        deleteRider,
         isCartOpen,
         setIsCartOpen,
         isCheckoutOpen,

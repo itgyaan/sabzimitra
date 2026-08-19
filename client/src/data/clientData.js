@@ -351,3 +351,54 @@ export const initialOrders = [
     createdAt: new Date(Date.now() - 18 * 60 * 1000).toISOString()
   }
 ];
+
+export const initialCustomers = [
+  {
+    id: 'cust-01',
+    name: 'Pooja Verma',
+    phone: '+919928123456',
+    email: 'pooja.verma@example.com',
+    address: 'Flat 402, Green Valley Apartments, Malviya Nagar, Jaipur',
+    totalOrders: 14,
+    totalSpent: 3420,
+    status: 'ACTIVE',
+    joinedDate: '15 Jan 2024',
+    walletBalance: 150
+  },
+  {
+    id: 'cust-02',
+    name: 'Amit Sharma',
+    phone: '+919829099881',
+    email: 'amit.sharma@gmail.com',
+    address: 'Plot 45, Surya Nagar, Gopalpura Bypass, Jaipur',
+    totalOrders: 8,
+    totalSpent: 1980,
+    status: 'ACTIVE',
+    joinedDate: '10 Feb 2024',
+    walletBalance: 0
+  },
+  {
+    id: 'cust-03',
+    name: 'Sunita Meena',
+    phone: '+919414012987',
+    email: 'sunita.meena@yahoo.in',
+    address: 'B-12, Vaishali Nagar, Jaipur',
+    totalOrders: 22,
+    totalSpent: 5890,
+    status: 'ACTIVE',
+    joinedDate: '20 Nov 2023',
+    walletBalance: 240
+  },
+  {
+    id: 'cust-04',
+    name: 'Rajesh Khandelwal',
+    phone: '+919828876543',
+    email: 'rajesh.k@rediffmail.com',
+    address: 'House #88, Raja Park, Jaipur',
+    totalOrders: 3,
+    totalSpent: 620,
+    status: 'ACTIVE',
+    joinedDate: '01 Mar 2024',
+    walletBalance: 50
+  }
+];
