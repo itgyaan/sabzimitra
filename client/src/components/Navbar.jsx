@@ -77,7 +77,7 @@ export const Navbar = () => {
               gap: '6px', 
               cursor: 'pointer',
               minWidth: 0,
-              flex: '1 1 auto'
+              flexShrink: 1
             }}
           >
             <div style={{
@@ -122,7 +122,7 @@ export const Navbar = () => {
                   padding: 0,
                   cursor: 'pointer',
                   fontWeight: 600,
-                  maxWidth: '120px',
+                  maxWidth: '100px',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap'
@@ -137,51 +137,41 @@ export const Navbar = () => {
             </div>
           </div>
 
-          {/* Controls: Auth Profile, Lang, Theme, Cart */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0, marginLeft: 'auto' }}>
-            {/* Language Switcher */}
+          {/* Controls: Cart, Auth Profile, Lang, Theme */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+            {/* Cart Button (Always First & 100% visible on all mobile screens) */}
             <button
-              onClick={() => setLang(lang === 'hi' ? 'en' : 'hi')}
+              onClick={() => setIsCartOpen(true)}
+              className="btn-primary"
               style={{
+                position: 'relative',
+                padding: '6px 10px',
+                fontSize: '0.78rem',
+                height: '32px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '2px',
-                background: 'var(--bg-card)',
-                color: 'var(--text-main)',
-                border: '1px solid var(--border-color)',
-                padding: '4px 6px',
+                gap: '4px',
+                flexShrink: 0,
                 borderRadius: 'var(--radius-full)',
-                fontSize: '0.7rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                height: '30px',
-                flexShrink: 0
+                boxShadow: totalCartCount > 0 ? '0 0 12px rgba(16, 185, 129, 0.45)' : 'none'
               }}
-              title="Switch Language"
+              title="Open Basket / Cart"
             >
-              <Globe size={11} style={{ color: 'var(--primary)' }} />
-              <span>{lang === 'hi' ? 'EN' : 'हिन्दी'}</span>
-            </button>
-
-            {/* Theme Switcher */}
-            <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              style={{
-                width: '30px',
-                height: '30px',
-                borderRadius: '50%',
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border-color)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--text-main)',
-                cursor: 'pointer',
-                flexShrink: 0
-              }}
-              title="Toggle Theme"
-            >
-              {theme === 'dark' ? <Sun size={13} style={{ color: '#f59e0b' }} /> : <Moon size={13} />}
+              <ShoppingBag size={15} />
+              <span className="hide-on-mobile">{lang === 'hi' ? 'थैला' : 'Cart'}</span>
+              {totalCartCount > 0 && (
+                <span style={{
+                  background: '#ffffff',
+                  color: '#059669',
+                  fontSize: '0.68rem',
+                  fontWeight: 900,
+                  borderRadius: 'var(--radius-full)',
+                  padding: '1px 5px',
+                  lineHeight: 1.1
+                }}>
+                  {totalCartCount}
+                </span>
+              )}
             </button>
 
             {/* Auth Profile / Login Avatar Button */}
@@ -197,8 +187,8 @@ export const Navbar = () => {
                   borderRadius: '50%',
                   padding: '1px',
                   cursor: 'pointer',
-                  width: '30px',
-                  height: '30px',
+                  width: '32px',
+                  height: '32px',
                   position: 'relative',
                   boxShadow: role === 'PROFILE' ? '0 0 10px rgba(16, 185, 129, 0.4)' : 'var(--shadow-sm)',
                   flexShrink: 0,
@@ -210,8 +200,8 @@ export const Navbar = () => {
                   src={user.avatar}
                   alt={user.name}
                   style={{
-                    width: '24px',
-                    height: '24px',
+                    width: '26px',
+                    height: '26px',
                     borderRadius: '50%',
                     objectFit: 'cover'
                   }}
@@ -221,8 +211,8 @@ export const Navbar = () => {
                   position: 'absolute',
                   bottom: '-1px',
                   right: '-1px',
-                  width: '7px',
-                  height: '7px',
+                  width: '8px',
+                  height: '8px',
                   background: '#10b981',
                   border: '1.5px solid var(--bg-card)',
                   borderRadius: '50%'
@@ -239,50 +229,60 @@ export const Navbar = () => {
                   color: 'var(--primary)',
                   border: '1.5px solid var(--primary)',
                   borderRadius: '50%',
-                  width: '30px',
-                  height: '30px',
+                  width: '32px',
+                  height: '32px',
                   cursor: 'pointer',
                   flexShrink: 0
                 }}
                 title={t.login}
               >
-                <User size={14} />
+                <User size={15} />
               </button>
             )}
 
-            {/* Cart Button (Always 100% visible on all screen sizes) */}
+            {/* Language Switcher */}
             <button
-              onClick={() => setIsCartOpen(true)}
-              className="btn-primary"
+              onClick={() => setLang(lang === 'hi' ? 'en' : 'hi')}
               style={{
-                position: 'relative',
-                padding: '5px 9px',
-                fontSize: '0.76rem',
-                height: '30px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '4px',
-                flexShrink: 0,
-                boxShadow: totalCartCount > 0 ? '0 0 10px rgba(16, 185, 129, 0.45)' : 'none'
+                gap: '2px',
+                background: 'var(--bg-card)',
+                color: 'var(--text-main)',
+                border: '1px solid var(--border-color)',
+                padding: '4px 6px',
+                borderRadius: 'var(--radius-full)',
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                height: '32px',
+                flexShrink: 0
               }}
-              title="Open Basket"
+              title="Switch Language"
             >
-              <ShoppingBag size={14} />
-              <span className="hide-on-mobile">{lang === 'hi' ? 'थैला' : 'Cart'}</span>
-              {totalCartCount > 0 && (
-                <span style={{
-                  background: '#ffffff',
-                  color: '#059669',
-                  fontSize: '0.68rem',
-                  fontWeight: 900,
-                  borderRadius: 'var(--radius-full)',
-                  padding: '1px 5px',
-                  marginLeft: '1px',
-                  lineHeight: 1.1
-                }}>
-                  {totalCartCount}
-                </span>
-              )}
+              <Globe size={11} style={{ color: 'var(--primary)' }} />
+              <span>{lang === 'hi' ? 'EN' : 'हिन्दी'}</span>
+            </button>
+
+            {/* Theme Switcher */}
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--text-main)',
+                cursor: 'pointer',
+                flexShrink: 0
+              }}
+              title="Toggle Theme"
+            >
+              {theme === 'dark' ? <Sun size={13} style={{ color: '#f59e0b' }} /> : <Moon size={13} />}
             </button>
           </div>
         </div>
