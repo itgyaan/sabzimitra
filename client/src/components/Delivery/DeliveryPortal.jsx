@@ -19,6 +19,7 @@ import {
   Check,
   RotateCcw
 } from 'lucide-react';
+import { LiveMapTilerTracker } from '../Common/LiveMapTilerTracker';
 
 export const DeliveryPortal = () => {
   const { 
@@ -284,6 +285,14 @@ export const DeliveryPortal = () => {
           }}>
             {/* Route & Stop Details */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Real MapTiler Live GPS Map */}
+              <LiveMapTilerTracker
+                status={activeOrder.status}
+                vendorName={activeOrder.vendorName || 'Sharma Fresh Sabzi Bhandar'}
+                customerName={activeOrder.customerName || 'Pooja Verma'}
+                height="220px"
+              />
+
               {/* Step 1: Mandi Pickup Point */}
               <div style={{
                 background: 'var(--bg-card-subtle)',

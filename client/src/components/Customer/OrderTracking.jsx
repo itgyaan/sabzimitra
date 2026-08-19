@@ -14,6 +14,7 @@ import {
   Sparkles,
   KeyRound
 } from 'lucide-react';
+import { LiveMapTilerTracker } from '../Common/LiveMapTilerTracker';
 
 export const OrderTracking = () => {
   const { orders, activeOrderId, lang, updateOrderStatus, showToast } = useApp();
@@ -117,104 +118,38 @@ export const OrderTracking = () => {
         gap: '20px',
         padding: 'clamp(14px, 3vw, 24px)'
       }}>
-        {/* Left: Interactive Simulated Route Map */}
+        {/* Left: Real Interactive MapTiler Route Map */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{
-            height: '240px',
-            borderRadius: '16px',
-            background: 'radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%)',
-            position: 'relative',
-            overflow: 'hidden',
-            border: '1px solid var(--border-color)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: 'inset 0 0 20px rgba(0,0,0,0.5)'
-          }}>
-            {/* SVG Simulated Road Route */}
-            <svg width="100%" height="100%" viewBox="0 0 400 200" style={{ position: 'absolute', top: 0, left: 0 }}>
-              {/* Road Grid lines */}
-              <line x1="20" y1="50" x2="380" y2="50" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-              <line x1="20" y1="100" x2="380" y2="100" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-              <line x1="20" y1="150" x2="380" y2="150" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+          <div style={{ position: 'relative' }}>
+            <LiveMapTilerTracker
+              status={order.status}
+              vendorName={order.vendorName || 'Sharma Fresh Sabzi Bhandar'}
+              customerName={order.customerName || 'Pooja Verma'}
+              height="270px"
+            />
 
-              {/* Delivery Path Curve */}
-              <path
-                d="M 50 140 Q 150 40, 240 120 T 350 70"
-                fill="none"
-                stroke="rgba(16, 185, 129, 0.3)"
-                strokeWidth="6"
-                strokeDasharray="6 6"
-              />
-              <path
-                d="M 50 140 Q 150 40, 240 120 T 350 70"
-                fill="none"
-                stroke="#10b981"
-                strokeWidth="3"
-              />
-
-              {/* Vendor Mandi Pin */}
-              <g transform="translate(50, 140)">
-                <circle r="12" fill="#f59e0b" />
-                <text textAnchor="middle" y="4" fill="#fff" fontSize="10" fontWeight="bold">🏪</text>
-              </g>
-
-              {/* Customer Home Pin */}
-              <g transform="translate(350, 70)">
-                <circle r="12" fill="#10b981" />
-                <text textAnchor="middle" y="4" fill="#fff" fontSize="10" fontWeight="bold">🏠</text>
-              </g>
-
-              {/* Animated Moving Rider Marker */}
-              {order.status !== 'DELIVERED' && (
-                <g transform={currentStep === 0 ? "translate(60, 135)" : currentStep === 1 ? "translate(140, 70)" : "translate(260, 110)"}>
-                  <circle r="14" fill="#3b82f6" className="pulse-animation" />
-                  <text textAnchor="middle" y="4" fill="#fff" fontSize="11" fontWeight="bold">🛵</text>
-                </g>
-              )}
-            </svg>
-
-            {/* ETA Overlay Pill */}
-            <div style={{
-              position: 'absolute',
-              bottom: '12px',
-              left: '12px',
-              background: 'rgba(15, 23, 42, 0.85)',
-              backdropFilter: 'blur(8px)',
-              padding: '6px 14px',
-              borderRadius: 'var(--radius-full)',
-              color: '#fff',
-              fontSize: '0.8rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              border: '1px solid rgba(255,255,255,0.1)'
-            }}>
-              <Clock size={13} style={{ color: '#10b981' }} />
-              <span>
-                {order.status === 'DELIVERED' 
-                  ? 'Arrived at your doorstep' 
-                  : `Estimated Delivery: ~${order.estimatedMins || 15} Mins`}
-              </span>
-            </div>
-
-            {/* Simulation Speedup Button */}
+            {/* Floating Simulation / Advance Button */}
             {order.status !== 'DELIVERED' && (
               <button
                 onClick={handleSimulateAdvance}
                 style={{
                   position: 'absolute',
-                  top: '12px',
+                  bottom: '12px',
                   right: '12px',
-                  background: 'rgba(16, 185, 129, 0.9)',
+                  zIndex: 1000,
+                  background: 'rgba(16, 185, 129, 0.95)',
                   color: '#fff',
                   border: 'none',
-                  padding: '5px 12px',
+                  padding: '6px 14px',
                   borderRadius: 'var(--radius-full)',
                   fontSize: '0.74rem',
-                  fontWeight: 700,
+                  fontWeight: 800,
                   cursor: 'pointer',
-                  boxShadow: '0 4px 10px rgba(0,0,0,0.3)'
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)',
+                  backdropFilter: 'blur(6px)'
                 }}
               >
                 ⏩ Simulate Next Step
