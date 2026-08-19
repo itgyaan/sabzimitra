@@ -131,38 +131,8 @@ export const Navbar = () => {
             </div>
           </div>
 
-          {/* Controls: Active Tracker, Auth Profile, Lang, Theme, Cart */}
+          {/* Controls: Auth Profile, Lang, Theme, Cart */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', position: 'relative' }}>
-            {/* Active Order Tracker Chip */}
-            {activeOrder && (
-              <button
-                onClick={() => {
-                  setRole('CUSTOMER');
-                  setActiveOrderId(activeOrder.id);
-                  const trackElem = document.getElementById('order-tracking-section');
-                  if (trackElem) trackElem.scrollIntoView({ behavior: 'smooth' });
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-                  color: '#92400e',
-                  border: '1px solid #fcd34d',
-                  padding: '5px 10px',
-                  borderRadius: 'var(--radius-full)',
-                  fontSize: '0.72rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap'
-                }}
-                className="pulse-animation"
-              >
-                <PackageCheck size={13} />
-                <span>{lang === 'hi' ? 'ट्रैकिंग' : 'Track'}</span>
-              </button>
-            )}
-
             {/* Auth Profile / Login Avatar Button */}
             {user?.isAuthenticated ? (
               <button
