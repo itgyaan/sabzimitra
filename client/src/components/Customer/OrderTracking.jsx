@@ -113,9 +113,9 @@ export const OrderTracking = () => {
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-        gap: '24px',
-        padding: '24px'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+        gap: '20px',
+        padding: 'clamp(14px, 3vw, 24px)'
       }}>
         {/* Left: Interactive Simulated Route Map */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

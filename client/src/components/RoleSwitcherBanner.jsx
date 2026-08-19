@@ -38,48 +38,49 @@ export const RoleSwitcherBanner = () => {
     <div style={{
       background: 'linear-gradient(90deg, rgba(5, 150, 105, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%)',
       borderBottom: '1px solid var(--border-color)',
-      padding: '10px 0',
-      fontSize: '0.86rem'
+      padding: '8px 0',
+      fontSize: '0.82rem'
     }}>
       <div className="container-max" style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: '10px'
+        gap: '8px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
           <span style={{
             background: 'var(--primary)',
             color: '#fff',
-            padding: '2px 8px',
+            padding: '2px 7px',
             borderRadius: 'var(--radius-full)',
-            fontSize: '0.72rem',
+            fontSize: '0.68rem',
             fontWeight: 800
           }}>
-            ACTIVE ROLE
+            ROLE
           </span>
-          <strong style={{ color: 'var(--text-main)' }}>{currentInfo.title}</strong>
-          <span style={{ color: 'var(--text-muted)', display: 'none', md: 'inline' }}>
-            — {currentInfo.desc}
-          </span>
+          <strong style={{ color: 'var(--text-main)', fontSize: '0.85rem' }}>{currentInfo.title}</strong>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-            {lang === 'hi' ? 'रोल बदलें:' : 'Quick Switch:'}
-          </span>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
+          overflowX: 'auto',
+          maxWidth: '100%'
+        }} className="no-scrollbar">
           <button
             onClick={() => setRole('CUSTOMER')}
             style={{
-              padding: '4px 10px',
+              padding: '3px 8px',
               borderRadius: '6px',
               border: '1px solid var(--border-color)',
               background: role === 'CUSTOMER' ? 'var(--primary)' : 'var(--bg-card)',
               color: role === 'CUSTOMER' ? '#fff' : 'var(--text-main)',
-              fontSize: '0.76rem',
+              fontSize: '0.72rem',
               fontWeight: 600,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              whiteSpace: 'nowrap'
             }}
           >
             Customer
@@ -87,14 +88,15 @@ export const RoleSwitcherBanner = () => {
           <button
             onClick={() => setRole('VENDOR')}
             style={{
-              padding: '4px 10px',
+              padding: '3px 8px',
               borderRadius: '6px',
               border: '1px solid var(--border-color)',
               background: role === 'VENDOR' ? '#F59E0B' : 'var(--bg-card)',
               color: role === 'VENDOR' ? '#fff' : 'var(--text-main)',
-              fontSize: '0.76rem',
+              fontSize: '0.72rem',
               fontWeight: 600,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              whiteSpace: 'nowrap'
             }}
           >
             Vendor
@@ -102,29 +104,31 @@ export const RoleSwitcherBanner = () => {
           <button
             onClick={() => setRole('DELIVERY_PARTNER')}
             style={{
-              padding: '4px 10px',
+              padding: '3px 8px',
               borderRadius: '6px',
               border: '1px solid var(--border-color)',
               background: role === 'DELIVERY_PARTNER' ? '#3B82F6' : 'var(--bg-card)',
               color: role === 'DELIVERY_PARTNER' ? '#fff' : 'var(--text-main)',
-              fontSize: '0.76rem',
+              fontSize: '0.72rem',
               fontWeight: 600,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              whiteSpace: 'nowrap'
             }}
           >
-            Delivery Rider
+            Rider
           </button>
           <button
             onClick={() => setRole('ADMIN')}
             style={{
-              padding: '4px 10px',
+              padding: '3px 8px',
               borderRadius: '6px',
               border: '1px solid var(--border-color)',
               background: role === 'ADMIN' ? '#8B5CF6' : 'var(--bg-card)',
               color: role === 'ADMIN' ? '#fff' : 'var(--text-main)',
-              fontSize: '0.76rem',
+              fontSize: '0.72rem',
               fontWeight: 600,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              whiteSpace: 'nowrap'
             }}
           >
             Admin

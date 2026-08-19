@@ -11,6 +11,7 @@ import { VendorDashboard } from './components/Vendor/VendorDashboard';
 import { DeliveryPortal } from './components/Delivery/DeliveryPortal';
 import { AdminDashboard } from './components/Admin/AdminDashboard';
 import { NotificationToast } from './components/NotificationToast';
+import { LoginModal } from './components/Auth/LoginModal';
 import { 
   Heart, 
   ShieldCheck, 
@@ -89,6 +90,7 @@ const MainContent = () => {
       </footer>
 
       <NotificationToast />
+      <LoginModal />
     </div>
   );
 };

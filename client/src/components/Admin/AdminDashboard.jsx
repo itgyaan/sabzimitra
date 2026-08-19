@@ -119,9 +119,9 @@ export const AdminDashboard = () => {
       {/* KPI Cards Grid */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-        gap: '16px',
-        marginBottom: '32px'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))',
+        gap: '12px',
+        marginBottom: '24px'
       }}>
         <div className="glass-card" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', marginBottom: '8px' }}>
@@ -179,9 +179,9 @@ export const AdminDashboard = () => {
       {/* Main Sections: KYC Verification Queue & Commission Adjuster */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-        gap: '24px',
-        marginBottom: '32px'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+        gap: '20px',
+        marginBottom: '28px'
       }}>
         {/* Vendor KYC Review Portal */}
         <section className="glass-card" style={{ padding: '24px' }}>

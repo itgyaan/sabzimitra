@@ -131,9 +131,9 @@ export const DeliveryPortal = () => {
       {/* Earnings Summary Row */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '16px',
-        marginBottom: '28px'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 150px), 1fr))',
+        gap: '12px',
+        marginBottom: '24px'
       }}>
         <div className="glass-card" style={{ padding: '18px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', marginBottom: '6px' }}>
@@ -209,9 +209,9 @@ export const DeliveryPortal = () => {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '24px',
-            padding: '24px'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+            gap: '20px',
+            padding: 'clamp(14px, 3vw, 24px)'
           }}>
             {/* Route Details */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

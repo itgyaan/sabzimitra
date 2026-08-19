@@ -78,7 +78,7 @@ export const CartDrawer = () => {
           flexDirection: 'column',
           overflowY: 'auto'
         }}
-        className="animate-slide-up"
+        className="animate-slide-up mobile-full-modal"
       >
         {/* Header */}
         <div style={{

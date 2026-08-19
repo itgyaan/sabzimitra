@@ -47,7 +47,10 @@ export const translations = {
     mandiFresh: 'Mandi Fresh Today',
     viewDetails: 'View Details',
     weeklyBox: 'Weekly Subscription Box',
-    buildBox: 'Customize Weekly Basket'
+    buildBox: 'Customize Weekly Basket',
+    login: 'Sign In / Register',
+    logout: 'Sign Out',
+    myAccount: 'My Account'
   },
   hi: {
     appName: 'सब्ज़ी मित्र',
@@ -92,7 +95,10 @@ export const translations = {
     mandiFresh: 'आज सुबह की ताज़ा फसल',
     viewDetails: 'विवरण देखें',
     weeklyBox: 'साप्ताहिक सब्जी सब्सक्रिप्शन',
-    buildBox: 'अपना साप्ताहिक बॉक्स बनाएं'
+    buildBox: 'अपना साप्ताहिक बॉक्स बनाएं',
+    login: 'लॉगिन / खाता',
+    logout: 'लॉगआउट',
+    myAccount: 'मेरा खाता'
   }
 };
 
@@ -100,6 +106,16 @@ export const AppProvider = ({ children }) => {
   const [role, setRole] = useState('CUSTOMER'); // CUSTOMER | VENDOR | DELIVERY_PARTNER | ADMIN
   const [lang, setLang] = useState('hi'); // 'hi' | 'en'
   const [theme, setTheme] = useState('light'); // 'light' | 'dark'
+
+  // User Auth State
+  const [user, setUser] = useState({
+    id: 'usr-cust-1',
+    name: 'Pooja Verma',
+    contact: '+919928123456',
+    role: 'CUSTOMER',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+    isAuthenticated: true
+  });
 
   const [products, setProducts] = useState(initialProducts);
   const [cart, setCart] = useState([]);
@@ -112,6 +128,8 @@ export const AppProvider = ({ children }) => {
   const [vendors, setVendors] = useState(initialVendors);
   const [deliveryPartners, setDeliveryPartners] = useState(initialDeliveryPartners);
 
+  // Modals
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isSubscriptionOpen, setIsSubscriptionOpen] = useState(false);
@@ -131,6 +149,28 @@ export const AppProvider = ({ children }) => {
     setTimeout(() => {
       setToastMessage(null);
     }, 4000);
+  };
+
+  // Auth Operations
+  const login = (userData) => {
+    setUser({ ...userData, isAuthenticated: true });
+    setRole(userData.role || 'CUSTOMER');
+  };
+
+  const logout = () => {
+    setUser({
+      id: null,
+      name: 'Guest User',
+      contact: '',
+      role: 'CUSTOMER',
+      avatar: null,
+      isAuthenticated: false
+    });
+    setRole('CUSTOMER');
+    showToast(
+      lang === 'hi' ? 'लॉगआउट हुआ' : 'Logged Out',
+      'You have been logged out safely.'
+    );
   };
 
   // Cart operations
@@ -235,8 +275,8 @@ export const AppProvider = ({ children }) => {
       vendorName: 'Sharma Fresh Sabzi Bhandar',
       deliveryPartnerId: 'dlv-01',
       deliveryPartnerName: 'Vikram Choudhary',
-      customerName: 'Pooja Verma',
-      customerPhone: '+919928123456',
+      customerName: user.name || 'Pooja Verma',
+      customerPhone: user.contact || '+919928123456',
       ...orderPayload
     };
 
@@ -287,6 +327,11 @@ export const AppProvider = ({ children }) => {
         setLang,
         theme,
         setTheme,
+        user,
+        login,
+        logout,
+        isLoginModalOpen,
+        setIsLoginModalOpen,
         t,
         products,
         setProducts,

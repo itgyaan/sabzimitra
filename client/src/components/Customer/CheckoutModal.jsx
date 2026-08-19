@@ -96,9 +96,11 @@ export const CheckoutModal = () => {
           boxShadow: 'var(--shadow-lg)',
           overflow: 'hidden',
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          maxHeight: '90vh',
+          overflowY: 'auto'
         }}
-        className="animate-slide-up"
+        className="animate-slide-up mobile-full-modal"
       >
         {/* Header */}
         <div style={{
