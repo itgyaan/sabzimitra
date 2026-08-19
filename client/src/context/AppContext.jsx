@@ -119,7 +119,10 @@ export const AppProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
       const saved = localStorage.getItem('sm_user');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object' && parsed.name) return parsed;
+      }
     } catch (e) {}
     return {
       id: 'usr-cust-1',
@@ -134,28 +137,34 @@ export const AppProvider = ({ children }) => {
     };
   });
 
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState(initialProducts || []);
   const [cart, setCart] = useState([]);
   const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const [coupons, setCoupons] = useState(initialCoupons);
+  const [coupons, setCoupons] = useState(initialCoupons || []);
 
   const [orders, setOrders] = useState(() => {
     try {
       const saved = localStorage.getItem('sm_orders');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
     } catch (e) {}
-    return initialOrders;
+    return initialOrders || [];
   });
 
   const [activeOrderId, setActiveOrderId] = useState('ORD-9821');
 
-  const [vendors, setVendors] = useState(initialVendors);
-  const [deliveryPartners, setDeliveryPartners] = useState(initialDeliveryPartners);
+  const [vendors, setVendors] = useState(initialVendors || []);
+  const [deliveryPartners, setDeliveryPartners] = useState(initialDeliveryPartners || []);
 
   const [userLocation, setUserLocation] = useState(() => {
     try {
       const saved = localStorage.getItem('sm_user_loc');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object' && parsed.lat) return parsed;
+      }
     } catch (e) {}
     return {
       lat: 26.8525,

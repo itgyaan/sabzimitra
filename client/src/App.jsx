@@ -25,7 +25,7 @@ import {
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, errorInfo: null };
   }
 
   static getDerivedStateFromError(error) {
@@ -34,6 +34,7 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('App Error Caught:', error, errorInfo);
+    this.setState({ error, errorInfo });
   }
 
   render() {
@@ -45,33 +46,58 @@ class ErrorBoundary extends React.Component {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'var(--bg-body, #0f172a)',
-          color: 'var(--text-main, #ffffff)',
+          background: '#0f172a',
+          color: '#ffffff',
           padding: '24px',
           textAlign: 'center'
         }}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>🥬</div>
           <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px' }}>SabziMitra (सब्ज़ी मित्र)</h2>
-          <p style={{ fontSize: '0.9rem', color: '#94a3b8', maxWidth: '400px', marginBottom: '20px' }}>
-            App loaded smoothly. Click below to refresh if needed.
-          </p>
+          
+          <div style={{
+            background: 'rgba(239, 68, 68, 0.12)',
+            border: '1px solid #ef4444',
+            borderRadius: '14px',
+            padding: '16px',
+            color: '#fca5a5',
+            fontSize: '0.85rem',
+            maxWidth: '650px',
+            width: '100%',
+            textAlign: 'left',
+            fontFamily: 'monospace',
+            marginBottom: '20px',
+            overflowX: 'auto',
+            whiteSpace: 'pre-wrap',
+            lineHeight: 1.4
+          }}>
+            <strong>Diagnostic Error:</strong>
+            {'\n'}
+            {this.state.error?.toString() || 'Unknown runtime error'}
+            {'\n\n'}
+            <small style={{ color: '#94a3b8' }}>{this.state.error?.stack || ''}</small>
+          </div>
+
           <button
             onClick={() => {
-              localStorage.clear();
+              try {
+                localStorage.clear();
+                sessionStorage.clear();
+              } catch(e) {}
               window.location.reload();
             }}
             style={{
               background: '#059669',
               color: '#ffffff',
               border: 'none',
-              padding: '10px 24px',
+              padding: '12px 28px',
               borderRadius: '9999px',
-              fontWeight: 700,
-              fontSize: '0.9rem',
-              cursor: 'pointer'
+              fontWeight: 800,
+              fontSize: '0.92rem',
+              cursor: 'pointer',
+              boxShadow: '0 4px 14px rgba(5, 150, 105, 0.4)'
             }}
           >
-            Refresh App
+            Clear Data & Refresh App
           </button>
         </div>
       );
@@ -81,8 +107,10 @@ class ErrorBoundary extends React.Component {
 }
 
 const MainContent = () => {
-  const { role, lang, t, orders } = useApp();
-  const hasActiveOrder = orders.some(o => o.status !== 'DELIVERED');
+  const appState = useApp() || {};
+  const { role = 'CUSTOMER', lang = 'hi', t = {}, orders = [] } = appState;
+  const safeOrders = Array.isArray(orders) ? orders : [];
+  const hasActiveOrder = safeOrders.some(o => o && o.status !== 'DELIVERED');
 
   return (
     <div className="app-wrapper">
