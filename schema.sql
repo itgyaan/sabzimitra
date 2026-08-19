@@ -1,33 +1,60 @@
 -- SabziMitra (सब्ज़ी मित्र) - PostgreSQL Production Database Schema
--- Version: 1.0.0
+-- Version: 1.1.0 (Neon.tech & Supabase Native Postgres Compatible)
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- 1. ENUMS (Safe creation)
+DO $$ BEGIN
+    CREATE TYPE user_role AS ENUM ('CUSTOMER', 'VENDOR', 'DELIVERY_PARTNER', 'ADMIN');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
--- 1. ENUMS
-CREATE TYPE user_role AS ENUM ('CUSTOMER', 'VENDOR', 'DELIVERY_PARTNER', 'ADMIN');
-CREATE TYPE kyc_status AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'UNDER_REVIEW');
-CREATE TYPE order_status AS ENUM ('PLACED', 'ACCEPTED', 'PACKED', 'PICKED_UP', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED', 'REFUNDED');
-CREATE TYPE payment_mode AS ENUM ('RAZORPAY', 'PHONEPE_UPI', 'CASH_ON_DELIVERY');
-CREATE TYPE payment_status AS ENUM ('PENDING', 'COMPLETED', 'FAILED', 'REFUNDED');
-CREATE TYPE delivery_mode AS ENUM ('EXPRESS_DELIVERY', 'SCHEDULED_SLOT', 'SHOP_PICKUP');
+DO $$ BEGIN
+    CREATE TYPE kyc_status AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'UNDER_REVIEW');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE order_status AS ENUM ('PLACED', 'ACCEPTED', 'PACKED', 'PICKED_UP', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED', 'REFUNDED');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE payment_mode AS ENUM ('RAZORPAY', 'PHONEPE_UPI', 'CASH_ON_DELIVERY');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE payment_status AS ENUM ('PENDING', 'COMPLETED', 'FAILED', 'REFUNDED');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE delivery_mode AS ENUM ('EXPRESS_DELIVERY', 'SCHEDULED_SLOT', 'SHOP_PICKUP');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- 2. USERS TABLE
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     phone VARCHAR(15) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE,
     full_name VARCHAR(100) NOT NULL,
     role user_role DEFAULT 'CUSTOMER',
     avatar_url TEXT,
-    preferred_lang VARCHAR(5) DEFAULT 'hi', -- 'hi' or 'en'
+    preferred_lang VARCHAR(5) DEFAULT 'hi',
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 3. VENDORS TABLE
-CREATE TABLE vendors (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+CREATE TABLE IF NOT EXISTS vendors (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     shop_name VARCHAR(150) NOT NULL,
     mandi_location VARCHAR(200) NOT NULL,
@@ -44,8 +71,8 @@ CREATE TABLE vendors (
 );
 
 -- 4. DELIVERY PARTNERS TABLE
-CREATE TABLE delivery_partners (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+CREATE TABLE IF NOT EXISTS delivery_partners (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     vehicle_type VARCHAR(50) DEFAULT 'Two-Wheeler EV',
     vehicle_number VARCHAR(30),
@@ -60,7 +87,7 @@ CREATE TABLE delivery_partners (
 );
 
 -- 5. CATEGORIES TABLE
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     id VARCHAR(50) PRIMARY KEY,
     name_en VARCHAR(100) NOT NULL,
     name_hi VARCHAR(100) NOT NULL,
@@ -69,8 +96,8 @@ CREATE TABLE categories (
 );
 
 -- 6. PRODUCTS TABLE
-CREATE TABLE products (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+CREATE TABLE IF NOT EXISTS products (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     vendor_id UUID REFERENCES vendors(id) ON DELETE SET NULL,
     category_id VARCHAR(50) REFERENCES categories(id),
     name_en VARCHAR(150) NOT NULL,
@@ -80,7 +107,7 @@ CREATE TABLE products (
     price_per_kg DECIMAL(10,2) NOT NULL,
     mandi_rate_per_kg DECIMAL(10,2) NOT NULL,
     stock_kg DECIMAL(10,2) DEFAULT 50.0,
-    unit_type VARCHAR(20) DEFAULT 'kg', -- 'kg', 'gram', 'bunch', 'piece'
+    unit_type VARCHAR(20) DEFAULT 'kg',
     image_url TEXT,
     freshness_tag VARCHAR(100) DEFAULT 'Mandi Fresh Today',
     is_organic BOOLEAN DEFAULT FALSE,
@@ -89,10 +116,10 @@ CREATE TABLE products (
 );
 
 -- 7. COUPONS TABLE
-CREATE TABLE coupons (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+CREATE TABLE IF NOT EXISTS coupons (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code VARCHAR(30) UNIQUE NOT NULL,
-    discount_type VARCHAR(20) DEFAULT 'FLAT', -- 'FLAT' or 'PERCENT'
+    discount_type VARCHAR(20) DEFAULT 'FLAT',
     discount_value DECIMAL(10,2) NOT NULL,
     min_order_value DECIMAL(10,2) DEFAULT 0,
     max_discount_cap DECIMAL(10,2),
@@ -102,8 +129,8 @@ CREATE TABLE coupons (
 );
 
 -- 8. ORDERS TABLE
-CREATE TABLE orders (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+CREATE TABLE IF NOT EXISTS orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     order_number VARCHAR(20) UNIQUE NOT NULL,
     customer_id UUID NOT NULL REFERENCES users(id),
     vendor_id UUID REFERENCES vendors(id),
@@ -127,8 +154,8 @@ CREATE TABLE orders (
 );
 
 -- 9. ORDER ITEMS TABLE
-CREATE TABLE order_items (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+CREATE TABLE IF NOT EXISTS order_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     product_id UUID NOT NULL REFERENCES products(id),
     quantity_grams INT NOT NULL,
@@ -137,8 +164,8 @@ CREATE TABLE order_items (
 );
 
 -- 10. REVIEWS & RATINGS TABLE
-CREATE TABLE reviews (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+CREATE TABLE IF NOT EXISTS reviews (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     order_id UUID NOT NULL REFERENCES orders(id),
     customer_id UUID NOT NULL REFERENCES users(id),
     vendor_id UUID REFERENCES vendors(id),
@@ -148,15 +175,15 @@ CREATE TABLE reviews (
 );
 
 -- 11. PLATFORM CONFIG / ADMIN SETTINGS
-CREATE TABLE platform_settings (
+CREATE TABLE IF NOT EXISTS platform_settings (
     key VARCHAR(50) PRIMARY KEY,
     value JSONB NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- INDEXES FOR PERFORMANCE
-CREATE INDEX idx_products_category ON products(category_id);
-CREATE INDEX idx_orders_customer ON orders(customer_id);
-CREATE INDEX idx_orders_vendor ON orders(vendor_id);
-CREATE INDEX idx_orders_status ON orders(status);
-CREATE INDEX idx_users_phone ON users(phone);
+-- 12. PERFORMANCE INDEXES
+CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
+CREATE INDEX IF NOT EXISTS idx_orders_customer ON orders(customer_id);
+CREATE INDEX IF NOT EXISTS idx_orders_vendor ON orders(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone);
