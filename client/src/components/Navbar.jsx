@@ -25,6 +25,7 @@ export const Navbar = () => {
     theme, 
     setTheme, 
     cart, 
+    isCartOpen,
     setIsCartOpen, 
     orders, 
     setActiveOrderId,
@@ -58,13 +59,14 @@ export const Navbar = () => {
       borderBottom: '1px solid var(--border-color)',
       padding: '10px 0'
     }}>
-      <div className="container-max">
+      <div className="container-max" style={{ padding: '0 12px' }}>
         {/* Top Row: Logo, Auth Profile, Language, Theme, Cart */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '8px'
+          gap: '6px',
+          width: '100%'
         }}>
           {/* Brand & Location */}
           <div 
@@ -72,36 +74,36 @@ export const Navbar = () => {
             style={{ 
               display: 'flex', 
               alignItems: 'center', 
-              gap: '8px', 
+              gap: '6px', 
               cursor: 'pointer',
-              flexShrink: 0
+              minWidth: 0,
+              flex: '1 1 auto'
             }}
           >
             <div style={{
-              width: '38px',
-              height: '38px',
+              width: '34px',
+              height: '34px',
               borderRadius: '10px',
               background: 'linear-gradient(135deg, #059669 0%, #10B981 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '20px',
+              fontSize: '18px',
               boxShadow: '0 4px 10px rgba(5, 150, 105, 0.35)',
               flexShrink: 0
             }}>
               🥬
             </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ 
-                  fontWeight: 800, 
-                  fontSize: '1.15rem', 
-                  color: 'var(--text-main)',
-                  letterSpacing: '-0.02em',
-                  whiteSpace: 'nowrap'
-                }}>
-                  {lang === 'hi' ? 'सब्ज़ी मित्र' : 'SabziMitra'}
-                </span>
+            <div style={{ minWidth: 0, overflow: 'hidden' }}>
+              <div style={{ 
+                fontWeight: 800, 
+                fontSize: '1.05rem', 
+                color: 'var(--text-main)',
+                letterSpacing: '-0.02em',
+                whiteSpace: 'nowrap',
+                lineHeight: 1.1
+              }}>
+                {lang === 'hi' ? 'सब्ज़ी मित्र' : 'SabziMitra'}
               </div>
               <button
                 onClick={(e) => {
@@ -109,30 +111,34 @@ export const Navbar = () => {
                   requestUserLocation(false);
                 }}
                 style={{
-                  fontSize: '0.7rem',
+                  fontSize: '0.68rem',
                   color: userLocation?.isLiveGps ? '#10b981' : 'var(--text-muted)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '2px',
-                  margin: 0,
+                  margin: '1px 0 0 0',
                   background: 'none',
                   border: 'none',
                   padding: 0,
                   cursor: 'pointer',
-                  fontWeight: 600
+                  fontWeight: 600,
+                  maxWidth: '120px',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
                 }}
-                title={lang === 'hi' ? 'सटीक जीपीएस लोकेशन की अनुमति दें' : 'Click to allow live GPS location'}
+                title={lang === 'hi' ? 'सटीक जीपीएस लोकेशन' : 'Live GPS location'}
               >
-                <MapPin size={11} style={{ color: userLocation?.isLiveGps ? '#10b981' : 'var(--primary)', flexShrink: 0 }} />
-                <span style={{ whiteSpace: 'nowrap' }}>
-                  {userLocation?.address ? userLocation.address.split(',')[0] : 'Jaipur'} • 15 Mins
+                <MapPin size={10} style={{ color: userLocation?.isLiveGps ? '#10b981' : 'var(--primary)', flexShrink: 0 }} />
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {userLocation?.address ? userLocation.address.split(',')[0] : 'Jaipur'}
                 </span>
               </button>
             </div>
           </div>
 
           {/* Controls: Auth Profile, Lang, Theme, Cart */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', position: 'relative' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 0 }}>
             {/* Auth Profile / Login Avatar Button */}
             {user?.isAuthenticated ? (
               <button
@@ -142,25 +148,25 @@ export const Navbar = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   background: role === 'PROFILE' ? 'var(--primary-light)' : 'var(--bg-card)',
-                  border: role === 'PROFILE' ? '2.5px solid var(--primary)' : '2px solid var(--primary)',
+                  border: role === 'PROFILE' ? '2px solid var(--primary)' : '1.5px solid var(--primary)',
                   borderRadius: '50%',
-                  padding: '2px',
+                  padding: '1px',
                   cursor: 'pointer',
-                  width: '36px',
-                  height: '36px',
+                  width: '32px',
+                  height: '32px',
                   position: 'relative',
                   boxShadow: role === 'PROFILE' ? '0 0 12px rgba(16, 185, 129, 0.4)' : 'var(--shadow-sm)',
                   flexShrink: 0,
                   transition: 'all 0.2s ease'
                 }}
-                title={lang === 'hi' ? `${user.name} (प्रोफ़ाइल व ऑर्डर्स)` : `${user.name} (Profile & Orders)`}
+                title={lang === 'hi' ? `${user.name} (प्रोफ़ाइल)` : `${user.name} (Profile)`}
               >
                 <img
                   src={user.avatar}
                   alt={user.name}
                   style={{
-                    width: '28px',
-                    height: '28px',
+                    width: '26px',
+                    height: '26px',
                     borderRadius: '50%',
                     objectFit: 'cover'
                   }}
@@ -170,8 +176,8 @@ export const Navbar = () => {
                   position: 'absolute',
                   bottom: '-1px',
                   right: '-1px',
-                  width: '10px',
-                  height: '10px',
+                  width: '8px',
+                  height: '8px',
                   background: '#10b981',
                   border: '2px solid var(--bg-card)',
                   borderRadius: '50%'
@@ -188,14 +194,14 @@ export const Navbar = () => {
                   color: 'var(--primary)',
                   border: '1.5px solid var(--primary)',
                   borderRadius: '50%',
-                  width: '36px',
-                  height: '36px',
+                  width: '32px',
+                  height: '32px',
                   cursor: 'pointer',
                   flexShrink: 0
                 }}
                 title={t.login}
               >
-                <User size={16} />
+                <User size={15} />
               </button>
             )}
 
@@ -205,20 +211,21 @@ export const Navbar = () => {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '3px',
+                gap: '2px',
                 background: 'var(--bg-card)',
                 color: 'var(--text-main)',
                 border: '1px solid var(--border-color)',
-                padding: '5px 9px',
+                padding: '4px 7px',
                 borderRadius: 'var(--radius-full)',
-                fontSize: '0.74rem',
+                fontSize: '0.72rem',
                 fontWeight: 700,
                 cursor: 'pointer',
-                minHeight: '34px'
+                height: '32px',
+                flexShrink: 0
               }}
               title="Switch Language"
             >
-              <Globe size={13} style={{ color: 'var(--primary)' }} />
+              <Globe size={12} style={{ color: 'var(--primary)' }} />
               <span>{lang === 'hi' ? 'EN' : 'हिन्दी'}</span>
             </button>
 
@@ -226,8 +233,8 @@ export const Navbar = () => {
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               style={{
-                width: '34px',
-                height: '34px',
+                width: '32px',
+                height: '32px',
                 borderRadius: '50%',
                 background: 'var(--bg-card)',
                 border: '1px solid var(--border-color)',
@@ -240,31 +247,38 @@ export const Navbar = () => {
               }}
               title="Toggle Theme"
             >
-              {theme === 'dark' ? <Sun size={15} style={{ color: '#f59e0b' }} /> : <Moon size={15} />}
+              {theme === 'dark' ? <Sun size={14} style={{ color: '#f59e0b' }} /> : <Moon size={14} />}
             </button>
 
-            {/* Cart Button */}
+            {/* Cart Button (Always visible on all screen sizes) */}
             <button
               onClick={() => setIsCartOpen(true)}
               className="btn-primary"
               style={{
                 position: 'relative',
-                padding: '6px 12px',
-                fontSize: '0.8rem',
-                minHeight: '34px'
+                padding: '6px 10px',
+                fontSize: '0.78rem',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                flexShrink: 0,
+                boxShadow: totalCartCount > 0 ? '0 0 12px rgba(16, 185, 129, 0.4)' : 'none'
               }}
+              title="Open Cart"
             >
               <ShoppingBag size={15} />
-              <span className="hide-on-mobile">{lang === 'hi' ? 'थैला' : 'Basket'}</span>
+              <span className="hide-on-mobile">{lang === 'hi' ? 'थैला' : 'Cart'}</span>
               {totalCartCount > 0 && (
                 <span style={{
                   background: '#ffffff',
                   color: '#059669',
                   fontSize: '0.7rem',
-                  fontWeight: 800,
+                  fontWeight: 900,
                   borderRadius: 'var(--radius-full)',
                   padding: '1px 6px',
-                  marginLeft: '2px'
+                  marginLeft: '2px',
+                  lineHeight: 1.2
                 }}>
                   {totalCartCount}
                 </span>
@@ -328,6 +342,52 @@ export const Navbar = () => {
           </nav>
         </div>
       </div>
+
+      {/* Floating Bottom Quick Cart Bar for Instant Mobile Access */}
+      {role === 'CUSTOMER' && totalCartCount > 0 && !isCartOpen && (
+        <div 
+          onClick={() => setIsCartOpen(true)}
+          style={{
+            position: 'fixed',
+            bottom: '16px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 'calc(100% - 24px)',
+            maxWidth: '460px',
+            zIndex: 999,
+            background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+            color: '#ffffff',
+            borderRadius: '16px',
+            padding: '12px 18px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxShadow: '0 10px 30px rgba(5, 150, 105, 0.5)',
+            cursor: 'pointer',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
+            backdropFilter: 'blur(8px)'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.22)',
+              padding: '5px 10px',
+              borderRadius: '8px',
+              fontWeight: 800,
+              fontSize: '0.82rem'
+            }}>
+              🛍️ {totalCartCount} {lang === 'hi' ? 'सामान' : 'Items'}
+            </div>
+            <div style={{ fontSize: '0.95rem', fontWeight: 900 }}>
+              ₹{cart.reduce((sum, item) => sum + item.price * item.qty, 0)}
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 800, fontSize: '0.86rem' }}>
+            <span>{lang === 'hi' ? 'थैला देखें' : 'View Cart'}</span>
+            <span>➔</span>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
