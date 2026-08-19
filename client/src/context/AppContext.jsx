@@ -152,6 +152,21 @@ export const AppProvider = ({ children }) => {
   const [vendors, setVendors] = useState(initialVendors);
   const [deliveryPartners, setDeliveryPartners] = useState(initialDeliveryPartners);
 
+  const [userLocation, setUserLocation] = useState(() => {
+    try {
+      const saved = localStorage.getItem('sm_user_loc');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return {
+      lat: 26.8525,
+      lng: 75.8235,
+      address: 'Malviya Nagar, Jaipur',
+      isLiveGps: false
+    };
+  });
+
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+
   // Modals
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -163,6 +178,49 @@ export const AppProvider = ({ children }) => {
   const [commissionRate, setCommissionRate] = useState(8.5);
 
   const t = translations[lang] || translations.hi;
+
+  // Request & Detect Accurate User Location (GPS)
+  const requestUserLocation = (silent = false) => {
+    if (!navigator.geolocation) {
+      if (!silent) showToast('Location Error', 'Geolocation is not supported by your browser', 'error');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        let detectedAddress = `${latitude.toFixed(4)}°N, ${longitude.toFixed(4)}°E (Jaipur)`;
+        try {
+          const res = await fetch(`https://api.maptiler.com/geocoding/${longitude},${latitude}.json?key=MsX5E5sG2GFTtK8L6GRT`);
+          const data = await res.json();
+          if (data && data.features && data.features.length > 0) {
+            detectedAddress = data.features[0].place_name || data.features[0].text;
+          }
+        } catch (e) {}
+
+        const loc = { lat: latitude, lng: longitude, address: detectedAddress, isLiveGps: true };
+        setUserLocation(loc);
+        localStorage.setItem('sm_user_loc', JSON.stringify(loc));
+        updateUserProfile({ address: detectedAddress });
+
+        showToast(
+          lang === 'hi' ? '📍 लोकेशन प्राप्त हुई!' : '📍 Accurate GPS Detected!',
+          `Doorstep tracking set to: ${detectedAddress.slice(0, 38)}...`,
+          'success'
+        );
+      },
+      (err) => {
+        if (!silent) {
+          showToast(
+            'Location Permission Required',
+            'Please allow browser location access for precise 15-min delivery tracking.',
+            'warning'
+          );
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   // Persist theme
   useEffect(() => {
@@ -412,6 +470,11 @@ export const AppProvider = ({ children }) => {
         setTheme,
         user,
         updateUserProfile,
+        userLocation,
+        setUserLocation,
+        requestUserLocation,
+        isLocationModalOpen,
+        setIsLocationModalOpen,
         login,
         logout,
         isLoginModalOpen,

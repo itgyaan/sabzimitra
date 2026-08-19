@@ -98,10 +98,31 @@ export const Navbar = () => {
                   {lang === 'hi' ? 'सब्ज़ी मित्र' : 'SabziMitra'}
                 </span>
               </div>
-              <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '2px', margin: 0 }}>
-                <MapPin size={11} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-                <span style={{ whiteSpace: 'nowrap' }}>Jaipur • 15 Mins</span>
-              </p>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  requestUserLocation(false);
+                }}
+                style={{
+                  fontSize: '0.7rem',
+                  color: userLocation?.isLiveGps ? '#10b981' : 'var(--text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '2px',
+                  margin: 0,
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  fontWeight: 600
+                }}
+                title={lang === 'hi' ? 'सटीक जीपीएस लोकेशन की अनुमति दें' : 'Click to allow live GPS location'}
+              >
+                <MapPin size={11} style={{ color: userLocation?.isLiveGps ? '#10b981' : 'var(--primary)', flexShrink: 0 }} />
+                <span style={{ whiteSpace: 'nowrap' }}>
+                  {userLocation?.address ? userLocation.address.split(',')[0] : 'Jaipur'} • 15 Mins
+                </span>
+              </button>
             </div>
           </div>
 
