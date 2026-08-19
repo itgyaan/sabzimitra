@@ -38,102 +38,41 @@ export const RoleSwitcherBanner = () => {
     <div style={{
       background: 'linear-gradient(90deg, rgba(5, 150, 105, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%)',
       borderBottom: '1px solid var(--border-color)',
-      padding: '8px 0',
-      fontSize: '0.82rem'
+      padding: '7px 0',
+      fontSize: '0.8rem'
     }}>
       <div className="container-max" style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: '8px'
+        gap: '6px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <span style={{
             background: 'var(--primary)',
             color: '#fff',
             padding: '2px 7px',
             borderRadius: 'var(--radius-full)',
-            fontSize: '0.68rem',
+            fontSize: '0.66rem',
             fontWeight: 800
           }}>
-            ROLE
+            ACTIVE MODE
           </span>
-          <strong style={{ color: 'var(--text-main)', fontSize: '0.85rem' }}>{currentInfo.title}</strong>
+          <strong style={{ color: 'var(--text-main)', fontSize: '0.84rem' }}>{currentInfo.title}</strong>
         </div>
 
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
-          overflowX: 'auto',
-          maxWidth: '100%'
-        }} className="no-scrollbar">
-          <button
-            onClick={() => setRole('CUSTOMER')}
-            style={{
-              padding: '3px 8px',
-              borderRadius: '6px',
-              border: '1px solid var(--border-color)',
-              background: role === 'CUSTOMER' ? 'var(--primary)' : 'var(--bg-card)',
-              color: role === 'CUSTOMER' ? '#fff' : 'var(--text-main)',
-              fontSize: '0.72rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            Customer
-          </button>
-          <button
-            onClick={() => setRole('VENDOR')}
-            style={{
-              padding: '3px 8px',
-              borderRadius: '6px',
-              border: '1px solid var(--border-color)',
-              background: role === 'VENDOR' ? '#F59E0B' : 'var(--bg-card)',
-              color: role === 'VENDOR' ? '#fff' : 'var(--text-main)',
-              fontSize: '0.72rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            Vendor
-          </button>
-          <button
-            onClick={() => setRole('DELIVERY_PARTNER')}
-            style={{
-              padding: '3px 8px',
-              borderRadius: '6px',
-              border: '1px solid var(--border-color)',
-              background: role === 'DELIVERY_PARTNER' ? '#3B82F6' : 'var(--bg-card)',
-              color: role === 'DELIVERY_PARTNER' ? '#fff' : 'var(--text-main)',
-              fontSize: '0.72rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            Rider
-          </button>
-          <button
-            onClick={() => setRole('ADMIN')}
-            style={{
-              padding: '3px 8px',
-              borderRadius: '6px',
-              border: '1px solid var(--border-color)',
-              background: role === 'ADMIN' ? '#8B5CF6' : 'var(--bg-card)',
-              color: role === 'ADMIN' ? '#fff' : 'var(--text-main)',
-              fontSize: '0.72rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            Admin
-          </button>
-        </div>
+        <p style={{
+          fontSize: '0.74rem',
+          color: 'var(--text-muted)',
+          margin: 0,
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          maxWidth: '500px'
+        }} className="hide-on-mobile">
+          {currentInfo.desc}
+        </p>
       </div>
     </div>
   );

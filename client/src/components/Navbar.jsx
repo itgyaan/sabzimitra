@@ -137,7 +137,7 @@ export const Navbar = () => {
               </button>
             )}
 
-            {/* Auth Profile / Login Button */}
+            {/* Auth Profile / Login Avatar Button */}
             {user?.isAuthenticated ? (
               <div style={{ position: 'relative' }}>
                 <button
@@ -145,103 +145,187 @@ export const Navbar = () => {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '6px',
+                    justifyContent: 'center',
                     background: 'var(--bg-card)',
-                    color: 'var(--text-main)',
-                    border: '1px solid var(--border-color)',
-                    padding: '4px 8px 4px 5px',
-                    borderRadius: 'var(--radius-full)',
-                    fontSize: '0.76rem',
-                    fontWeight: 700,
+                    border: '2px solid var(--primary)',
+                    borderRadius: '50%',
+                    padding: '2px',
                     cursor: 'pointer',
-                    minHeight: '34px'
+                    width: '36px',
+                    height: '36px',
+                    position: 'relative',
+                    boxShadow: 'var(--shadow-sm)',
+                    flexShrink: 0
                   }}
+                  title={user.name}
                 >
                   <img
                     src={user.avatar}
                     alt={user.name}
                     style={{
-                      width: '24px',
-                      height: '24px',
+                      width: '28px',
+                      height: '28px',
                       borderRadius: '50%',
                       objectFit: 'cover'
                     }}
                   />
-                  <span style={{ maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {user.name.split(' ')[0]}
-                  </span>
-                  <ChevronDown size={12} style={{ color: 'var(--text-muted)' }} />
+                  {/* Active Online Green Dot */}
+                  <span style={{
+                    position: 'absolute',
+                    bottom: '-1px',
+                    right: '-1px',
+                    width: '10px',
+                    height: '10px',
+                    background: '#10b981',
+                    border: '2px solid var(--bg-card)',
+                    borderRadius: '50%'
+                  }} />
                 </button>
 
-                {/* Dropdown Menu */}
+                {/* Full Rich Profile Modal / Card */}
                 {isProfileMenuOpen && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '40px',
-                      right: 0,
-                      background: 'var(--bg-card)',
-                      borderRadius: '14px',
-                      border: '1px solid var(--border-color)',
-                      boxShadow: 'var(--shadow-lg)',
-                      padding: '8px',
-                      minWidth: '180px',
-                      zIndex: 200,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '4px'
-                    }}
-                    className="animate-slide-up"
-                  >
-                    <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--border-subtle)' }}>
-                      <p style={{ fontSize: '0.82rem', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>
-                        {user.name}
-                      </p>
-                      <span className="badge-tag badge-green" style={{ fontSize: '0.62rem', marginTop: '4px' }}>
-                        {user.role}
-                      </span>
+                  <>
+                    {/* Backdrop */}
+                    <div 
+                      onClick={() => setIsProfileMenuOpen(false)}
+                      style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        zIndex: 199,
+                        background: 'rgba(0,0,0,0.3)',
+                        backdropFilter: 'blur(2px)'
+                      }}
+                    />
+
+                    {/* Profile Sheet */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '44px',
+                        right: 0,
+                        background: 'var(--bg-card)',
+                        borderRadius: '20px',
+                        border: '1px solid var(--border-color)',
+                        boxShadow: '0 16px 40px -10px rgba(0,0,0,0.25)',
+                        padding: '18px',
+                        width: 'min(90vw, 300px)',
+                        zIndex: 200,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '14px'
+                      }}
+                      className="animate-slide-up"
+                    >
+                      {/* User Header Details */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ position: 'relative' }}>
+                          <img
+                            src={user.avatar}
+                            alt={user.name}
+                            style={{
+                              width: '52px',
+                              height: '52px',
+                              borderRadius: '50%',
+                              objectFit: 'cover',
+                              border: '2px solid var(--primary)'
+                            }}
+                          />
+                          <span style={{
+                            position: 'absolute',
+                            bottom: '2px',
+                            right: '2px',
+                            width: '12px',
+                            height: '12px',
+                            background: '#10b981',
+                            border: '2px solid var(--bg-card)',
+                            borderRadius: '50%'
+                          }} />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <h4 style={{
+                            fontSize: '1rem',
+                            fontWeight: 800,
+                            margin: 0,
+                            color: 'var(--text-main)',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}>
+                            {user.name}
+                          </h4>
+                          <span className="badge-tag badge-green" style={{ fontSize: '0.66rem', marginTop: '3px' }}>
+                            {user.role === 'CUSTOMER' ? '🛒 Customer' : user.role === 'VENDOR' ? '🏪 Mandi Vendor' : user.role === 'DELIVERY_PARTNER' ? '🛵 Delivery Partner' : '🛡️ Super Admin'}
+                          </span>
+                          <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                            {user.phone || '+91 98877 66554'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Location / Mandi Info */}
+                      <div style={{
+                        background: 'var(--bg-card-subtle)',
+                        padding: '10px 12px',
+                        borderRadius: '12px',
+                        fontSize: '0.76rem',
+                        color: 'var(--text-muted)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}>
+                        <MapPin size={14} style={{ color: 'var(--primary)', flexShrink: 0 }} />
+                        <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {user.address || 'APMC Muhana Mandi, Jaipur'}
+                        </span>
+                      </div>
+
+                      {/* Actions List */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <button
+                          onClick={() => { setIsLoginModalOpen(true); setIsProfileMenuOpen(false); }}
+                          style={{
+                            padding: '10px 12px',
+                            background: 'var(--primary-light)',
+                            border: '1px solid rgba(16, 185, 129, 0.2)',
+                            borderRadius: '10px',
+                            fontSize: '0.82rem',
+                            fontWeight: 700,
+                            color: 'var(--primary)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                          }}
+                        >
+                          <UserCheck size={16} />
+                          <span>{lang === 'hi' ? 'खाता या रोल बदलें' : 'Switch Account / Role'}</span>
+                        </button>
+
+                        <button
+                          onClick={() => { logout(); setIsProfileMenuOpen(false); }}
+                          style={{
+                            padding: '10px 12px',
+                            background: 'transparent',
+                            border: '1px solid #fee2e2',
+                            borderRadius: '10px',
+                            fontSize: '0.82rem',
+                            fontWeight: 700,
+                            color: '#ef4444',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                          }}
+                        >
+                          <LogOut size={16} />
+                          <span>{t.logout}</span>
+                        </button>
+                      </div>
                     </div>
-
-                    <button
-                      onClick={() => { setIsLoginModalOpen(true); setIsProfileMenuOpen(false); }}
-                      style={{
-                        padding: '8px 10px',
-                        background: 'transparent',
-                        border: 'none',
-                        textAlign: 'left',
-                        fontSize: '0.8rem',
-                        color: 'var(--text-main)',
-                        cursor: 'pointer',
-                        borderRadius: '6px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px'
-                      }}
-                    >
-                      <UserCheck size={14} style={{ color: 'var(--primary)' }} />
-                      <span>{lang === 'hi' ? 'खाता बदलें / लॉगिन' : 'Switch Account / Login'}</span>
-                    </button>
-
-                    <button
-                      onClick={() => { logout(); setIsProfileMenuOpen(false); }}
-                      style={{
-                        padding: '8px 10px',
-                        background: 'transparent',
-                        border: 'none',
-                        textAlign: 'left',
-                        fontSize: '0.8rem',
-                        color: '#ef4444',
-                        cursor: 'pointer',
-                        borderRadius: '6px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px'
-                      }}
-                    >
-                      <LogOut size={14} />
-                      <span>{t.logout}</span>
-                    </button>
-                  </div>
+                  </>
                 )}
               </div>
             ) : (
@@ -250,20 +334,19 @@ export const Navbar = () => {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '5px',
+                  justifyContent: 'center',
                   background: 'var(--bg-card)',
                   color: 'var(--primary)',
                   border: '1.5px solid var(--primary)',
-                  padding: '5px 12px',
-                  borderRadius: 'var(--radius-full)',
-                  fontSize: '0.78rem',
-                  fontWeight: 800,
+                  borderRadius: '50%',
+                  width: '36px',
+                  height: '36px',
                   cursor: 'pointer',
-                  minHeight: '34px'
+                  flexShrink: 0
                 }}
+                title={t.login}
               >
-                <User size={14} />
-                <span>{t.login}</span>
+                <User size={16} />
               </button>
             )}
 
