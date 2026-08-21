@@ -138,8 +138,26 @@ export const AppProvider = ({ children }) => {
   });
 
   const [products, setProducts] = useState(initialProducts || []);
-  const [cart, setCart] = useState([]);
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [cart, setCart] = useState(() => {
+    try {
+      const saved = localStorage.getItem('sm_cart');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {}
+    return [];
+  });
+  const [appliedCoupon, setAppliedCoupon] = useState(() => {
+    try {
+      const saved = localStorage.getItem('sm_applied_coupon');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') return parsed;
+      }
+    } catch (e) {}
+    return null;
+  });
   const [coupons, setCoupons] = useState(initialCoupons || []);
   const [authenticatedRoles, setAuthenticatedRoles] = useState(() => {
     try {
@@ -305,6 +323,24 @@ export const AppProvider = ({ children }) => {
     }
   }, [orders]);
 
+  // Persist cart
+  useEffect(() => {
+    try {
+      localStorage.setItem('sm_cart', JSON.stringify(cart));
+    } catch (e) {}
+  }, [cart]);
+
+  // Persist applied coupon
+  useEffect(() => {
+    try {
+      if (appliedCoupon) {
+        localStorage.setItem('sm_applied_coupon', JSON.stringify(appliedCoupon));
+      } else {
+        localStorage.removeItem('sm_applied_coupon');
+      }
+    } catch (e) {}
+  }, [appliedCoupon]);
+
   const showToast = (title, message, type = 'success') => {
     setToastMessage({ title, message, type, id: Date.now() });
     setTimeout(() => {
@@ -440,6 +476,10 @@ export const AppProvider = ({ children }) => {
   const clearCart = () => {
     setCart([]);
     setAppliedCoupon(null);
+    try {
+      localStorage.removeItem('sm_cart');
+      localStorage.removeItem('sm_applied_coupon');
+    } catch (e) {}
   };
 
   // Coupon apply
