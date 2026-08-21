@@ -332,3 +332,37 @@ button, input, select, textarea, a {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Responsive Cart Dropdown Popover */
+.cart-dropdown-popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 360px;
+  max-width: calc(100vw - 20px);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28), 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  z-index: 1100;
+  animation: fadeIn 0.2s ease-out;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+@media (max-width: 640px) {
+  .cart-dropdown-popover {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 12px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: 440px !important;
+    margin: 0 auto !important;
+    border-radius: 22px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+    z-index: 1200 !important;
+  }
+}
+

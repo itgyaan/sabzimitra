@@ -35,7 +35,7 @@ export const CartDrawer = () => {
 
   if (!isCartOpen) return null;
 
-  const itemSubtotal = cart.reduce((sum, item) => sum + item.unitPrice * item.qty, 0);
+  const itemSubtotal = cart.reduce((sum, item) => sum + (Number(item.unitPrice || item.price || item.pricePerKg) || 0) * (Number(item.qty) || 1), 0);
   const deliveryFee = deliveryMode === 'SHOP_PICKUP' || itemSubtotal >= 299 ? 0 : 15;
   const packagingFee = 5;
   const discountAmount = appliedCoupon ? appliedCoupon.discount : 0;

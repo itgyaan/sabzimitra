@@ -164,7 +164,13 @@ export const Navbar = () => {
             {/* Cart Button & Dropdown Container */}
             <div style={{ position: 'relative' }} ref={cartDropdownRef}>
               <button
-                onClick={() => setIsCartDropdownOpen(prev => !prev)}
+                onClick={() => {
+                  if (typeof window !== 'undefined' && window.innerWidth <= 640) {
+                    setIsCartOpen(true);
+                  } else {
+                    setIsCartDropdownOpen(prev => !prev);
+                  }
+                }}
                 className="btn-primary"
                 style={{
                   position: 'relative',
@@ -179,7 +185,7 @@ export const Navbar = () => {
                   boxShadow: totalCartCount > 0 ? '0 0 12px rgba(16, 185, 129, 0.45)' : 'none',
                   cursor: 'pointer'
                 }}
-                title={lang === 'hi' ? 'थैला देखें / ड्रॉपडाउन' : 'View Cart Dropdown'}
+                title={lang === 'hi' ? 'थैला देखें' : 'View Basket'}
               >
                 <ShoppingBag size={15} />
                 <span className="hide-on-mobile">{lang === 'hi' ? 'थैला' : 'Cart'}</span>
@@ -200,30 +206,18 @@ export const Navbar = () => {
 
               {/* Responsive Dropdown Menu Below the Cart Button */}
               {isCartDropdownOpen && (
-                <div 
-                  style={{
-                    position: 'absolute',
-                    top: 'calc(100% + 8px)',
-                    right: 0,
-                    width: 'clamp(290px, 88vw, 360px)',
-                    background: 'var(--bg-card)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: '18px',
-                    boxShadow: '0 16px 40px rgba(0, 0, 0, 0.28), 0 4px 12px rgba(0, 0, 0, 0.1)',
-                    padding: '16px',
-                    zIndex: 1100,
-                    animation: 'fadeIn 0.2s ease-out',
-                    backdropFilter: 'blur(20px)'
-                  }}
-                >
-                  {/* Dropdown Header */}
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    paddingBottom: '10px',
-                    borderBottom: '1px solid var(--border-color)'
-                  }}>
+                <>
+                  <div 
+                    className="cart-dropdown-popover"
+                  >
+                    {/* Dropdown Header */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      paddingBottom: '10px',
+                      borderBottom: '1px solid var(--border-color)'
+                    }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span style={{ fontSize: '18px' }}>🛍️</span>
                       <span style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-main)' }}>
@@ -396,8 +390,9 @@ export const Navbar = () => {
                     </>
                   )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
+          </div>
 
             {/* Auth Profile / Login Avatar Button */}
             {user?.isAuthenticated ? (
