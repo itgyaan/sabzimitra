@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { 
   ShoppingBag, 
@@ -13,7 +13,10 @@ import {
   UserCheck,
   PackageCheck,
   LogOut,
-  ChevronDown
+  ChevronDown,
+  X,
+  ArrowRight,
+  Trash2
 } from 'lucide-react';
 
 export const Navbar = () => {
@@ -25,8 +28,12 @@ export const Navbar = () => {
     theme, 
     setTheme, 
     cart, 
+    updateCartQty,
+    clearCart,
     isCartOpen,
     setIsCartOpen, 
+    isCheckoutOpen,
+    setIsCheckoutOpen,
     orders, 
     setActiveOrderId,
     user,
@@ -41,7 +48,22 @@ export const Navbar = () => {
   } = useApp();
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const totalCartCount = cart.reduce((sum, item) => sum + item.qty, 0);
+  const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
+  const cartDropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (cartDropdownRef.current && !cartDropdownRef.current.contains(event.target)) {
+        setIsCartDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const totalCartCount = cart.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
+  const cartSubtotal = cart.reduce((sum, item) => sum + (Number(item.unitPrice || item.price || item.pricePerKg) || 0) * (Number(item.qty) || 1), 0);
   const activeOrder = orders.find(o => o.status !== 'DELIVERED');
 
   const roleNavItems = [
@@ -139,40 +161,243 @@ export const Navbar = () => {
 
           {/* Controls: Cart, Auth Profile, Lang, Theme */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
-            {/* Cart Button (Always First & 100% visible on all mobile screens) */}
-            <button
-              onClick={() => setIsCartOpen(true)}
-              className="btn-primary"
-              style={{
-                position: 'relative',
-                padding: '6px 10px',
-                fontSize: '0.78rem',
-                height: '32px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                flexShrink: 0,
-                borderRadius: 'var(--radius-full)',
-                boxShadow: totalCartCount > 0 ? '0 0 12px rgba(16, 185, 129, 0.45)' : 'none'
-              }}
-              title="Open Basket / Cart"
-            >
-              <ShoppingBag size={15} />
-              <span className="hide-on-mobile">{lang === 'hi' ? 'थैला' : 'Cart'}</span>
-              {totalCartCount > 0 && (
-                <span style={{
-                  background: '#ffffff',
-                  color: '#059669',
-                  fontSize: '0.68rem',
-                  fontWeight: 900,
+            {/* Cart Button & Dropdown Container */}
+            <div style={{ position: 'relative' }} ref={cartDropdownRef}>
+              <button
+                onClick={() => setIsCartDropdownOpen(prev => !prev)}
+                className="btn-primary"
+                style={{
+                  position: 'relative',
+                  padding: '6px 12px',
+                  fontSize: '0.78rem',
+                  height: '32px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  flexShrink: 0,
                   borderRadius: 'var(--radius-full)',
-                  padding: '1px 5px',
-                  lineHeight: 1.1
-                }}>
-                  {totalCartCount}
-                </span>
+                  boxShadow: totalCartCount > 0 ? '0 0 12px rgba(16, 185, 129, 0.45)' : 'none',
+                  cursor: 'pointer'
+                }}
+                title={lang === 'hi' ? 'थैला देखें / ड्रॉपडाउन' : 'View Cart Dropdown'}
+              >
+                <ShoppingBag size={15} />
+                <span className="hide-on-mobile">{lang === 'hi' ? 'थैला' : 'Cart'}</span>
+                {totalCartCount > 0 && (
+                  <span style={{
+                    background: '#ffffff',
+                    color: '#059669',
+                    fontSize: '0.68rem',
+                    fontWeight: 900,
+                    borderRadius: 'var(--radius-full)',
+                    padding: '1px 5px',
+                    lineHeight: 1.1
+                  }}>
+                    {totalCartCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Responsive Dropdown Menu Below the Cart Button */}
+              {isCartDropdownOpen && (
+                <div 
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
+                    right: 0,
+                    width: 'clamp(290px, 88vw, 360px)',
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '18px',
+                    boxShadow: '0 16px 40px rgba(0, 0, 0, 0.28), 0 4px 12px rgba(0, 0, 0, 0.1)',
+                    padding: '16px',
+                    zIndex: 1100,
+                    animation: 'fadeIn 0.2s ease-out',
+                    backdropFilter: 'blur(20px)'
+                  }}
+                >
+                  {/* Dropdown Header */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingBottom: '10px',
+                    borderBottom: '1px solid var(--border-color)'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '18px' }}>🛍️</span>
+                      <span style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-main)' }}>
+                        {lang === 'hi' ? 'आपका थैला' : 'Your Basket'} ({totalCartCount})
+                      </span>
+                    </div>
+                    <button 
+                      onClick={() => setIsCartDropdownOpen(false)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--text-muted)',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
+                      title="Close"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+
+                  {/* Items List */}
+                  {cart.length === 0 ? (
+                    <div style={{ padding: '24px 10px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: '32px', marginBottom: '8px' }}>🛒</div>
+                      <p style={{ fontSize: '0.85rem', fontWeight: 600 }}>
+                        {lang === 'hi' ? 'आपका थैला अभी खाली है' : 'Your basket is empty'}
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div 
+                        style={{ 
+                          maxHeight: '220px', 
+                          overflowY: 'auto', 
+                          padding: '6px 0',
+                          margin: '4px 0'
+                        }} 
+                        className="custom-scrollbar"
+                      >
+                        {cart.map((item) => {
+                          const itemPrice = Number(item.unitPrice || item.price || item.pricePerKg) || 0;
+                          const itemQty = Number(item.qty) || 1;
+                          const itemTotal = itemPrice * itemQty;
+                          return (
+                            <div 
+                              key={item.itemKey} 
+                              style={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'space-between',
+                                padding: '8px 0',
+                                borderBottom: '1px solid var(--border-color)',
+                                gap: '8px'
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+                                <span style={{ fontSize: '20px' }}>{item.icon || '🥬'}</span>
+                                <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                                  <div style={{ 
+                                    fontSize: '0.82rem', 
+                                    fontWeight: 700, 
+                                    color: 'var(--text-main)', 
+                                    whiteSpace: 'nowrap', 
+                                    overflow: 'hidden', 
+                                    textOverflow: 'ellipsis' 
+                                  }}>
+                                    {lang === 'hi' ? item.nameHi : item.nameEn}
+                                  </div>
+                                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                                    {item.portion} • ₹{itemPrice} × {itemQty}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Qty Counter & Price */}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                                <div style={{ 
+                                  display: 'flex', 
+                                  alignItems: 'center', 
+                                  gap: '4px',
+                                  background: 'var(--bg-card-subtle)',
+                                  borderRadius: 'var(--radius-full)',
+                                  padding: '2px 6px',
+                                  border: '1px solid var(--border-color)'
+                                }}>
+                                  <button 
+                                    onClick={() => updateCartQty(item.itemKey, -1)}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 2px', fontWeight: 800, fontSize: '0.8rem', color: 'var(--text-main)' }}
+                                  >
+                                    -
+                                  </button>
+                                  <span style={{ fontSize: '0.75rem', fontWeight: 800, minWidth: '14px', textAlign: 'center' }}>
+                                    {itemQty}
+                                  </span>
+                                  <button 
+                                    onClick={() => updateCartQty(item.itemKey, 1)}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 2px', fontWeight: 800, fontSize: '0.8rem', color: 'var(--primary)' }}
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                                <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--text-main)', minWidth: '42px', textAlign: 'right' }}>
+                                  ₹{itemTotal}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Total & Action Buttons */}
+                      <div style={{ paddingTop: '12px', borderTop: '1px solid var(--border-color)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                          <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                            {lang === 'hi' ? 'कुल राशि (Subtotal):' : 'Cart Subtotal:'}
+                          </span>
+                          <span style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--primary)' }}>
+                            ₹{cartSubtotal}
+                          </span>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button
+                            onClick={() => {
+                              setIsCartDropdownOpen(false);
+                              setIsCartOpen(true);
+                            }}
+                            style={{
+                              flex: 1,
+                              background: 'var(--bg-card-subtle)',
+                              color: 'var(--text-main)',
+                              border: '1px solid var(--border-color)',
+                              padding: '8px 10px',
+                              borderRadius: '12px',
+                              fontSize: '0.76rem',
+                              fontWeight: 700,
+                              cursor: 'pointer'
+                            }}
+                          >
+                            {lang === 'hi' ? 'पूरा थैला' : 'Full Cart'}
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setIsCartDropdownOpen(false);
+                              setIsCheckoutOpen(true);
+                            }}
+                            className="btn-primary"
+                            style={{
+                              flex: 1.3,
+                              padding: '8px 10px',
+                              borderRadius: '12px',
+                              fontSize: '0.78rem',
+                              fontWeight: 800,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '4px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            <span>{lang === 'hi' ? 'ऑर्डर करें' : 'Checkout'}</span>
+                            <ArrowRight size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               )}
-            </button>
+            </div>
 
             {/* Auth Profile / Login Avatar Button */}
             {user?.isAuthenticated ? (
@@ -342,52 +567,6 @@ export const Navbar = () => {
           </nav>
         </div>
       </div>
-
-      {/* Floating Bottom Quick Cart Bar for Instant Mobile Access */}
-      {role === 'CUSTOMER' && totalCartCount > 0 && !isCartOpen && (
-        <div 
-          onClick={() => setIsCartOpen(true)}
-          style={{
-            position: 'fixed',
-            bottom: '16px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 'calc(100% - 24px)',
-            maxWidth: '460px',
-            zIndex: 999,
-            background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-            color: '#ffffff',
-            borderRadius: '16px',
-            padding: '12px 18px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            boxShadow: '0 10px 30px rgba(5, 150, 105, 0.5)',
-            cursor: 'pointer',
-            border: '1px solid rgba(255, 255, 255, 0.25)',
-            backdropFilter: 'blur(8px)'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.22)',
-              padding: '5px 10px',
-              borderRadius: '8px',
-              fontWeight: 800,
-              fontSize: '0.82rem'
-            }}>
-              🛍️ {totalCartCount} {lang === 'hi' ? 'सामान' : 'Items'}
-            </div>
-            <div style={{ fontSize: '0.95rem', fontWeight: 900 }}>
-              ₹{cart.reduce((sum, item) => sum + item.price * item.qty, 0)}
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 800, fontSize: '0.86rem' }}>
-            <span>{lang === 'hi' ? 'थैला देखें' : 'View Cart'}</span>
-            <span>➔</span>
-          </div>
-        </div>
-      )}
     </header>
   );
 };
