@@ -444,8 +444,13 @@ export const AppProvider = ({ children }) => {
 
   // Coupon apply
   const applyCouponCode = (code) => {
-    const coupon = coupons.find(c => c.code.toUpperCase() === code.toUpperCase());
-    const cartSubtotal = cart.reduce((sum, item) => sum + item.unitPrice * item.qty, 0);
+    if (!code || code.trim() === '') {
+      removeCoupon();
+      return true;
+    }
+
+    const coupon = coupons.find(c => c.code.toUpperCase() === code.trim().toUpperCase());
+    const cartSubtotal = cart.reduce((sum, item) => sum + (Number(item.unitPrice || item.price || item.pricePerKg) || 0) * (Number(item.qty) || 1), 0);
 
     if (!coupon) {
       showToast('Invalid Coupon', 'Please enter a valid coupon code like FRESH50 or SABZIMITRA', 'error');
@@ -478,6 +483,15 @@ export const AppProvider = ({ children }) => {
       `Saved ₹${Math.round(discount)} with ${coupon.code}`
     );
     return true;
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    showToast(
+      lang === 'hi' ? 'कूपन हटाया गया' : 'Coupon Removed',
+      lang === 'hi' ? 'कूपन डिस्काउंट हटा दिया गया है।' : 'Coupon discount has been removed.',
+      'info'
+    );
   };
 
   // Place Order
@@ -662,6 +676,7 @@ export const AppProvider = ({ children }) => {
         deleteCoupon,
         appliedCoupon,
         applyCouponCode,
+        removeCoupon,
         orders,
         activeOrderId,
         setActiveOrderId,

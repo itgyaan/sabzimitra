@@ -24,6 +24,7 @@ export const CartDrawer = () => {
     clearCart,
     appliedCoupon,
     applyCouponCode,
+    removeCoupon,
     setIsCheckoutOpen,
     lang,
     t
@@ -350,8 +351,17 @@ export const CartDrawer = () => {
                     ✓ {appliedCoupon.code} applied (Saved ₹{appliedCoupon.discount})
                   </span>
                   <button
-                    onClick={() => applyCouponCode('')}
-                    style={{ background: 'transparent', border: 'none', color: '#ef4444', fontSize: '0.72rem', cursor: 'pointer' }}
+                    onClick={() => removeCoupon()}
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.1)',
+                      border: '1px solid rgba(239, 68, 68, 0.25)',
+                      color: '#ef4444',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      borderRadius: '6px',
+                      padding: '3px 8px',
+                      cursor: 'pointer'
+                    }}
                   >
                     Remove
                   </button>
